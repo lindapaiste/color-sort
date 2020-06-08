@@ -1,0 +1,1 @@
+{"version":3,"file":"ball-move-context.js","sourceRoot":"","sources":["../../src/ball-move-context.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,aAAa,EAAE,UAAU,EAAE,MAAM,OAAO,CAAC;AAElD,IAAM,iBAAiB,GAAG,aAAa,CAAqB,SAAS,CAAC,CAAC;AAEvE,MAAM,CAAC,IAAM,aAAa,GAAG;IAC3B,OAAO,UAAU,CAAC,iBAAiB,CAAC,CAAC;AACvC,CAAC,CAAC"}

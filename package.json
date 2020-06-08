@@ -1,20 +1,32 @@
 {
-  "name": "react-native",
+  "name": "color-sort",
   "version": "1.0.0",
   "description": "React Native for Web starter template",
   "keywords": [],
   "main": "src/index.js",
   "dependencies": {
-    "lodash": "4.17.15",
+    "@reduxjs/toolkit": "^1.3.6",
+    "@types/lodash": "^4.14.155",
+    "@types/react": "^16.9.35",
+    "@types/react-dom": "^16.9.8",
+    "@types/react-native": "^0.62.13",
+    "@types/react-redux": "^7.1.9",
+    "@types/redux": "^3.6.0",
+    "lodash": "^4.17.15",
     "react": "16.13.1",
     "react-dom": "16.13.1",
+    "react-native": "^0.62.2",
     "react-native-gesture-handler": "1.6.1",
     "react-native-reanimated": "1.9.0",
     "react-native-web": "0.12.2",
+    "react-redux": "^7.2.0",
     "react-scripts": "3.4.1",
-    "typescript": "3.9.5"
+    "redux": "^4.0.5",
+    "typescript": "^3.9.5"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "redux-devtools-extension": "^2.13.8"
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",

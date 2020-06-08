@@ -30,7 +30,7 @@ export const styles = StyleSheet.create({
   },
   scaleBase: {
     width: "100%",
-    heigth: 20,
+    height: 20,
     textAlign: "center"
   },
   ballPile: {
@@ -42,6 +42,7 @@ export const styles = StyleSheet.create({
     alignContent: "flex-end"
   },
   ball: {
+    //@ts-ignore
     borderRadius: "50%",
     margin: 3
   }

@@ -4,8 +4,7 @@
     "module": "esnext",
     "target": "es5",
     "lib": [
-      "esnext",
-      "dom"
+      "esnext"
     ],
     "sourceMap": true,
     "allowJs": true,
@@ -18,6 +17,8 @@
     "noImplicitAny": true,
     "strictNullChecks": true,
     "suppressImplicitAnyIndexErrors": true,
-    "noUnusedLocals": false
+    "noUnusedLocals": false,
+    "allowSyntheticDefaultImports": true,
+    "downlevelIteration": true
   }
 }

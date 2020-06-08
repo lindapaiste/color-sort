@@ -1,7 +1,7 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
-import { Color, colorString } from "./color-util";
-import { styles } from "./styles";
+import {StyleSheet, View} from "react-native";
+import {Color, colorString} from "../util/color-util";
+import {styles} from "../styles";
 
 export interface Props {
   color: Color;
@@ -9,7 +9,7 @@ export interface Props {
 }
 
 //TODO: is size a prop here?  probably is determined by global stylesheet
-export const Ball = ({ color, diameter }: Props) => (
+export const ColorBall = ({ color, diameter }: Props) => (
   <View
     style={StyleSheet.compose(
       styles.ball,
@@ -21,3 +21,4 @@ export const Ball = ({ color, diameter }: Props) => (
     )}
   />
 );
+

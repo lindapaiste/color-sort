@@ -1,8 +1,8 @@
 import React from "react";
-import {IdBall} from "./IdBall";
+import {Ball} from "./Ball";
 import { View } from "react-native";
-import {styles} from "../styles";
-
+import {styles} from "../../styles";
+import {DraggableN} from "./Draggable";
 
 export interface Props {
   balls: number[];
@@ -15,9 +15,9 @@ export const BallPile = ({ balls }: Props) => {
   return (
     <View style={styles.ballPile}>
       {balls.map(id => (
-        <View key={id} style={{}}>
-          <IdBall id={id} diameter={40} />
-        </View>
+        <DraggableN key={id}>
+          <Ball id={id} diameter={40} />
+        </DraggableN>
       ))}
     </View>
   );

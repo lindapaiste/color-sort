@@ -1,6 +1,6 @@
-import {LOCATIONS, LocIdMap} from "../state/level/types";
+import {LOCATIONS, LocIdMap} from "../../state/level/types";
 import {View} from "react-native";
-import {styles} from "../styles";
+import {styles} from "../../styles";
 import {Scale} from "./Scale";
 import {BallPile} from "./BallPile";
 import React from "react";

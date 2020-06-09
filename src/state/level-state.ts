@@ -1,4 +1,4 @@
-import {Props} from "../components/Level";
+import {Props} from "../components/level/Level";
 import {useState} from "react";
 import {BallProps, BallState, LevelStateReturns, LOCATIONS} from "./level/types";
 import {generateLevelBalls} from "../util/generateLevelBalls";

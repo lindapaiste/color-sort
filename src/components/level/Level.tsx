@@ -1,10 +1,10 @@
 import React, {useEffect} from "react";
-import {Color} from "../util/color-util";
+import {Color} from "../../util/color-util";
 import {useDispatch, useSelector} from "react-redux";
-import {allLocIds, isWin as getIsWin} from "../state/level/selectors";
+import {allLocIds, isWin as getIsWin} from "../../state/level/selectors";
 import {RenderLevel} from "./RenderLevel";
-import {setLevel} from "../state/level/actions";
-import {generateLevelBalls} from "../util/generateLevelBalls";
+import {setLevel} from "../../state/level/actions";
+import {generateLevelBalls} from "../../util/generateLevelBalls";
 
 export interface Props {
     count: number;

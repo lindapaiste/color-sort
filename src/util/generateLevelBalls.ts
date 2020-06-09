@@ -1,4 +1,4 @@
-import {Props} from "../components/Level";
+import {Props} from "../components/level/Level";
 import {BallData, LOCATIONS} from "../state/level/types";
 import {getGradient} from "./color-util";
 import {shuffle} from "lodash";

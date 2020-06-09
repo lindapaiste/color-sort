@@ -1,17 +1,17 @@
 import {combineReducers} from "redux";
-import {BallData, LevelActionTypes, LocIdMap} from "./types";
+import {BallData, LevelActionTypes, LocIdMap, RESET, SET_LEVEL, MOVE_BALL} from "./types";
 import {groupBy, keyBy, mapValues, without} from "lodash";
 
 export const locations = (state: LocIdMap = {}, action: LevelActionTypes): LocIdMap => {
     switch (action.type) {
-        case "RESET_LEVEL":
+        case RESET:
             //TODO
             return state;
-        case "SET_LEVEL":
+        case SET_LEVEL:
             const {balls} = action.payload;
             const grouped = groupBy(balls, b => b.initialLocation);
             return mapValues(grouped, balls => balls.map(b => b.id));
-        case "MOVE_BALL":
+        case MOVE_BALL:
             const {id, currentLocation, newLocation} = action.payload;
             if (currentLocation === newLocation) {
                 return state;
@@ -31,7 +31,7 @@ export type BallsShape = Record<number, BallData>;
 
 export const balls = (state: BallsShape = {}, action: LevelActionTypes): BallsShape => {
     switch (action.type) {
-        case "SET_LEVEL":
+        case SET_LEVEL:
             const {balls} = action.payload;
             /*const newState: BallsShape = {};
             balls.forEach( ball => {
@@ -50,12 +50,36 @@ export const balls = (state: BallsShape = {}, action: LevelActionTypes): BallsSh
     }
 };
 
+export interface StatsShape {
+    startTime: number,
+    moves: number,
+}
+
+export const stats = (state: StatsShape = {startTime: 0, moves: 0}, action: LevelActionTypes): StatsShape => {
+  switch (action.type) {
+      case MOVE_BALL:
+          return {
+              ...state,
+              moves: state.moves + 1,
+          };
+      case SET_LEVEL:
+          return {
+              ...state,
+              startTime: action.meta.timestamp,
+          };
+      default:
+          return state;
+  }
+};
+
 export interface StateShape {
     balls: BallsShape,
     locations: LocIdMap,
+    stats: StatsShape,
 }
 
 export const reducer = combineReducers({
     locations,
     balls,
+    stats,
 });

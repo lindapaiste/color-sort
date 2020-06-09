@@ -41,6 +41,14 @@ export const allLocIds = (state: State): LocIdMap => {
     return state.locations;
 };
 
+export const getMoveCount = (state: State): number => {
+    return state.stats.moves;
+};
+
+export const getElapsedTime = (state: State): number => {
+  return Date.now() - state.stats.startTime;
+};
+
 //-------------------------------WITH PROPS--------------------------------------------//
 
 export const getLocBalls = (state: State, location: LOCATIONS): BallData[] => {

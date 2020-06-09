@@ -70,6 +70,9 @@ interface SetLevelAction {
     payload: {
         balls: BallData[];
     };
+    meta: {
+        timestamp: number;
+    }
 }
 
 //would need to store initialLocation somewhere if it's anything other than all unassigned

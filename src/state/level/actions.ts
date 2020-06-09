@@ -13,5 +13,8 @@ export const setLevel = (balls: BallData[]): LevelActionTypes => ({
     type: SET_LEVEL,
     payload: {
         balls
+    },
+    meta: {
+        timestamp: Date.now(),
     }
 });

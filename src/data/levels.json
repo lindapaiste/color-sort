@@ -1,0 +1,938 @@
+[
+  {
+    "ballsPerRow": 5,
+    "rowsPerBox": 2,
+    "boxes": [
+      {
+        "color": "#f3f5a3"
+      },
+      {
+        "color": "#a3f5ca"
+      },
+      {
+        "color": "#a3a8f5"
+      },
+      {
+        "color": "#f5a3d4"
+      }
+    ],
+    "balls": [
+      {
+        "color": "#82efa4",
+        "correctBox": 1
+      },
+      {
+        "color": "#eaa2d3",
+        "correctBox": 3
+      },
+      {
+        "color": "#f0e1a4",
+        "correctBox": 0
+      },
+      {
+        "color": "#e793e3",
+        "correctBox": 3
+      },
+      {
+        "color": "#e0c0c6",
+        "correctBox": 3
+      },
+      {
+        "color": "#fddcb5",
+        "correctBox": 0
+      },
+      {
+        "color": "#e670c2",
+        "correctBox": 3
+      },
+      {
+        "color": "#e1f968",
+        "correctBox": 0
+      },
+      {
+        "color": "#d1eca0",
+        "correctBox": 0
+      },
+      {
+        "color": "#8defc4",
+        "correctBox": 1
+      },
+      {
+        "color": "#c7efdf",
+        "correctBox": 1
+      },
+      {
+        "color": "#827ddc",
+        "correctBox": 2
+      },
+      {
+        "color": "#e9f5b9",
+        "correctBox": 0
+      },
+      {
+        "color": "#ace3dc",
+        "correctBox": 1
+      },
+      {
+        "color": "#d7fea9",
+        "correctBox": 0
+      },
+      {
+        "color": "#a682db",
+        "correctBox": 2
+      },
+      {
+        "color": "#a0f4e9",
+        "correctBox": 1
+      },
+      {
+        "color": "#d7a9ba",
+        "correctBox": 3
+      },
+      {
+        "color": "#fa8ed0",
+        "correctBox": 3
+      },
+      {
+        "color": "#a7a8ea",
+        "correctBox": 2
+      },
+      {
+        "color": "#c0dec7",
+        "correctBox": 1
+      },
+      {
+        "color": "#93b1fa",
+        "correctBox": 2
+      },
+      {
+        "color": "#e5c2d1",
+        "correctBox": 3
+      },
+      {
+        "color": "#e899ed",
+        "correctBox": 3
+      },
+      {
+        "color": "#eed968",
+        "correctBox": 0
+      },
+      {
+        "color": "#d381b2",
+        "correctBox": 3
+      },
+      {
+        "color": "#ede3ae",
+        "correctBox": 0
+      },
+      {
+        "color": "#8f93eb",
+        "correctBox": 2
+      },
+      {
+        "color": "#bbdfc4",
+        "correctBox": 1
+      },
+      {
+        "color": "#9aefb6",
+        "correctBox": 1
+      },
+      {
+        "color": "#98b8d9",
+        "correctBox": 2
+      },
+      {
+        "color": "#afd9d2",
+        "correctBox": 1
+      },
+      {
+        "color": "#f1e5b7",
+        "correctBox": 0
+      },
+      {
+        "color": "#e6c1ee",
+        "correctBox": 3
+      },
+      {
+        "color": "#bb9df1",
+        "correctBox": 2
+      },
+      {
+        "color": "#8ac6fe",
+        "correctBox": 2
+      },
+      {
+        "color": "#9cfce2",
+        "correctBox": 1
+      },
+      {
+        "color": "#82bee8",
+        "correctBox": 2
+      },
+      {
+        "color": "#8ea4fc",
+        "correctBox": 2
+      },
+      {
+        "color": "#ffe098",
+        "correctBox": 0
+      }
+    ],
+    "meta": {
+      "levers": {
+        "minDistance": 0,
+        "maxDistance": 20,
+        "minDistinctness": 6,
+        "maxDistinctness": 50
+      },
+      "noise": {
+        "colorSpace": "rgb",
+        "noiseRatio": 0.25,
+        "weights": [
+          1,
+          1,
+          1,
+          1
+        ]
+      }
+    }
+  },
+  {
+    "ballsPerRow": 5,
+    "rowsPerBox": 2,
+    "boxes": [
+      {
+        "color": "#4a84ff"
+      },
+      {
+        "color": "#9973f8"
+      },
+      {
+        "color": "#c760df"
+      },
+      {
+        "color": "#e64dbf"
+      }
+    ],
+    "balls": [
+      {
+        "color": "#c476e4",
+        "correctBox": 2
+      },
+      {
+        "color": "#52b0cc",
+        "correctBox": 0
+      },
+      {
+        "color": "#fa2d96",
+        "correctBox": 3
+      },
+      {
+        "color": "#62b4e1",
+        "correctBox": 0
+      },
+      {
+        "color": "#fc819d",
+        "correctBox": 3
+      },
+      {
+        "color": "#d26ddb",
+        "correctBox": 2
+      },
+      {
+        "color": "#9dc6f8",
+        "correctBox": 1
+      },
+      {
+        "color": "#a79cf2",
+        "correctBox": 1
+      },
+      {
+        "color": "#3963b5",
+        "correctBox": 0
+      },
+      {
+        "color": "#e48cf1",
+        "correctBox": 2
+      },
+      {
+        "color": "#50afd7",
+        "correctBox": 0
+      },
+      {
+        "color": "#7c5cf2",
+        "correctBox": 1
+      },
+      {
+        "color": "#c12d8e",
+        "correctBox": 3
+      },
+      {
+        "color": "#e627b3",
+        "correctBox": 3
+      },
+      {
+        "color": "#844dee",
+        "correctBox": 1
+      },
+      {
+        "color": "#98b7e1",
+        "correctBox": 1
+      },
+      {
+        "color": "#d75e7e",
+        "correctBox": 3
+      },
+      {
+        "color": "#bf53f3",
+        "correctBox": 2
+      },
+      {
+        "color": "#d45c78",
+        "correctBox": 3
+      },
+      {
+        "color": "#d56dd7",
+        "correctBox": 2
+      },
+      {
+        "color": "#34b9b7",
+        "correctBox": 0
+      },
+      {
+        "color": "#c677e2",
+        "correctBox": 2
+      },
+      {
+        "color": "#fe6ab8",
+        "correctBox": 3
+      },
+      {
+        "color": "#5874d2",
+        "correctBox": 0
+      },
+      {
+        "color": "#a0bae9",
+        "correctBox": 1
+      },
+      {
+        "color": "#4fa2e2",
+        "correctBox": 0
+      },
+      {
+        "color": "#93a6ec",
+        "correctBox": 1
+      },
+      {
+        "color": "#61b3d1",
+        "correctBox": 0
+      },
+      {
+        "color": "#ea07c7",
+        "correctBox": 3
+      },
+      {
+        "color": "#de93e0",
+        "correctBox": 2
+      },
+      {
+        "color": "#e165f5",
+        "correctBox": 2
+      },
+      {
+        "color": "#938aee",
+        "correctBox": 1
+      },
+      {
+        "color": "#de75e5",
+        "correctBox": 2
+      },
+      {
+        "color": "#6484f1",
+        "correctBox": 0
+      },
+      {
+        "color": "#4f6cc0",
+        "correctBox": 0
+      },
+      {
+        "color": "#f66392",
+        "correctBox": 3
+      },
+      {
+        "color": "#8c77ed",
+        "correctBox": 1
+      },
+      {
+        "color": "#d459f8",
+        "correctBox": 2
+      },
+      {
+        "color": "#8e9ecf",
+        "correctBox": 1
+      },
+      {
+        "color": "#e322ce",
+        "correctBox": 3
+      }
+    ]
+  },
+  {
+    "ballsPerRow": 5,
+    "rowsPerBox": 2,
+    "boxes": [
+      {
+        "color": "#9d8941"
+      },
+      {
+        "color": "#009d8c"
+      },
+      {
+        "color": "#508ed1"
+      },
+      {
+        "color": "#cb6d8c"
+      }
+    ],
+    "balls": [
+      {
+        "color": "#95951a",
+        "correctBox": 0
+      },
+      {
+        "color": "#23a2a5",
+        "correctBox": 1
+      },
+      {
+        "color": "#de96bc",
+        "correctBox": 3
+      },
+      {
+        "color": "#4ea0d5",
+        "correctBox": 2
+      },
+      {
+        "color": "#a8a548",
+        "correctBox": 0
+      },
+      {
+        "color": "#a46893",
+        "correctBox": 3
+      },
+      {
+        "color": "#af7485",
+        "correctBox": 3
+      },
+      {
+        "color": "#2255e7",
+        "correctBox": 2
+      },
+      {
+        "color": "#a39b58",
+        "correctBox": 0
+      },
+      {
+        "color": "#289ba1",
+        "correctBox": 1
+      },
+      {
+        "color": "#37a75d",
+        "correctBox": 1
+      },
+      {
+        "color": "#6f84ee",
+        "correctBox": 2
+      },
+      {
+        "color": "#349885",
+        "correctBox": 1
+      },
+      {
+        "color": "#32c98c",
+        "correctBox": 1
+      },
+      {
+        "color": "#9b814d",
+        "correctBox": 0
+      },
+      {
+        "color": "#2dc090",
+        "correctBox": 1
+      },
+      {
+        "color": "#579bd7",
+        "correctBox": 2
+      },
+      {
+        "color": "#b5418c",
+        "correctBox": 3
+      },
+      {
+        "color": "#5778f7",
+        "correctBox": 2
+      },
+      {
+        "color": "#cfaba9",
+        "correctBox": 3
+      },
+      {
+        "color": "#2385e5",
+        "correctBox": 2
+      },
+      {
+        "color": "#21c5b1",
+        "correctBox": 1
+      },
+      {
+        "color": "#c85a8f",
+        "correctBox": 3
+      },
+      {
+        "color": "#d67fa7",
+        "correctBox": 3
+      },
+      {
+        "color": "#97addb",
+        "correctBox": 2
+      },
+      {
+        "color": "#3a6e81",
+        "correctBox": 1
+      },
+      {
+        "color": "#899af5",
+        "correctBox": 2
+      },
+      {
+        "color": "#a87f38",
+        "correctBox": 0
+      },
+      {
+        "color": "#aea860",
+        "correctBox": 0
+      },
+      {
+        "color": "#35a06e",
+        "correctBox": 1
+      },
+      {
+        "color": "#ac722c",
+        "correctBox": 0
+      },
+      {
+        "color": "#8e9467",
+        "correctBox": 0
+      },
+      {
+        "color": "#bd6177",
+        "correctBox": 3
+      },
+      {
+        "color": "#a68e49",
+        "correctBox": 0
+      },
+      {
+        "color": "#2a848c",
+        "correctBox": 1
+      },
+      {
+        "color": "#799ae0",
+        "correctBox": 2
+      },
+      {
+        "color": "#b03cb8",
+        "correctBox": 3
+      },
+      {
+        "color": "#c56eac",
+        "correctBox": 3
+      },
+      {
+        "color": "#c89c5a",
+        "correctBox": 0
+      },
+      {
+        "color": "#6472d4",
+        "correctBox": 2
+      }
+    ]
+  },
+  {
+    "ballsPerRow": 5,
+    "rowsPerBox": 2,
+    "boxes": [
+      {
+        "color": "#46007f"
+      },
+      {
+        "color": "#843ebd"
+      },
+      {
+        "color": "#c17bfa"
+      },
+      {
+        "color": "#ffb9ff"
+      }
+    ],
+    "balls": [
+      {
+        "color": "#3b204f",
+        "correctBox": 0
+      },
+      {
+        "color": "#be8ed0",
+        "correctBox": 2
+      },
+      {
+        "color": "#363c62",
+        "correctBox": 0
+      },
+      {
+        "color": "#eee5f9",
+        "correctBox": 3
+      },
+      {
+        "color": "#fadee2",
+        "correctBox": 3
+      },
+      {
+        "color": "#998ff8",
+        "correctBox": 2
+      },
+      {
+        "color": "#bd22ac",
+        "correctBox": 1
+      },
+      {
+        "color": "#660b5a",
+        "correctBox": 0
+      },
+      {
+        "color": "#e063f8",
+        "correctBox": 2
+      },
+      {
+        "color": "#a3589a",
+        "correctBox": 1
+      },
+      {
+        "color": "#521b7d",
+        "correctBox": 0
+      },
+      {
+        "color": "#172464",
+        "correctBox": 0
+      },
+      {
+        "color": "#b576ff",
+        "correctBox": 2
+      },
+      {
+        "color": "#3d083f",
+        "correctBox": 0
+      },
+      {
+        "color": "#7b29d7",
+        "correctBox": 1
+      },
+      {
+        "color": "#8640b7",
+        "correctBox": 1
+      },
+      {
+        "color": "#e6dfd7",
+        "correctBox": 3
+      },
+      {
+        "color": "#b771e1",
+        "correctBox": 2
+      },
+      {
+        "color": "#eec5ed",
+        "correctBox": 3
+      },
+      {
+        "color": "#da76ef",
+        "correctBox": 2
+      },
+      {
+        "color": "#f8d1de",
+        "correctBox": 3
+      },
+      {
+        "color": "#a85481",
+        "correctBox": 1
+      },
+      {
+        "color": "#f5e0fe",
+        "correctBox": 3
+      },
+      {
+        "color": "#eae6e4",
+        "correctBox": 3
+      },
+      {
+        "color": "#87aafd",
+        "correctBox": 2
+      },
+      {
+        "color": "#e2c8eb",
+        "correctBox": 3
+      },
+      {
+        "color": "#e4dafe",
+        "correctBox": 3
+      },
+      {
+        "color": "#b687ed",
+        "correctBox": 2
+      },
+      {
+        "color": "#1c0f7a",
+        "correctBox": 0
+      },
+      {
+        "color": "#a180e7",
+        "correctBox": 2
+      },
+      {
+        "color": "#4d127a",
+        "correctBox": 0
+      },
+      {
+        "color": "#a92e98",
+        "correctBox": 1
+      },
+      {
+        "color": "#311892",
+        "correctBox": 0
+      },
+      {
+        "color": "#272f4f",
+        "correctBox": 0
+      },
+      {
+        "color": "#7460a5",
+        "correctBox": 1
+      },
+      {
+        "color": "#6654d6",
+        "correctBox": 1
+      },
+      {
+        "color": "#fcb4f6",
+        "correctBox": 3
+      },
+      {
+        "color": "#ad99f7",
+        "correctBox": 2
+      },
+      {
+        "color": "#774ce0",
+        "correctBox": 1
+      },
+      {
+        "color": "#8255b8",
+        "correctBox": 1
+      }
+    ]
+  },
+  {
+    "ballsPerRow": 5,
+    "rowsPerBox": 2,
+    "boxes": [
+      {
+        "color": "#750bfd"
+      },
+      {
+        "color": "#a40bfd"
+      },
+      {
+        "color": "#fd0bf9"
+      },
+      {
+        "color": "#fd0b9c"
+      }
+    ],
+    "balls": [
+      {
+        "color": "#f633e9",
+        "correctBox": 2
+      },
+      {
+        "color": "#fc63f9",
+        "correctBox": 2
+      },
+      {
+        "color": "#564ce0",
+        "correctBox": 0
+      },
+      {
+        "color": "#f33ee1",
+        "correctBox": 2
+      },
+      {
+        "color": "#6123e2",
+        "correctBox": 0
+      },
+      {
+        "color": "#6028de",
+        "correctBox": 0
+      },
+      {
+        "color": "#5939eb",
+        "correctBox": 0
+      },
+      {
+        "color": "#ee5ef4",
+        "correctBox": 2
+      },
+      {
+        "color": "#e14068",
+        "correctBox": 3
+      },
+      {
+        "color": "#f44b8f",
+        "correctBox": 3
+      },
+      {
+        "color": "#b824e4",
+        "correctBox": 1
+      },
+      {
+        "color": "#5251fa",
+        "correctBox": 0
+      },
+      {
+        "color": "#6f22e5",
+        "correctBox": 0
+      },
+      {
+        "color": "#af1bee",
+        "correctBox": 1
+      },
+      {
+        "color": "#fb19de",
+        "correctBox": 2
+      },
+      {
+        "color": "#f156e8",
+        "correctBox": 2
+      },
+      {
+        "color": "#af32eb",
+        "correctBox": 1
+      },
+      {
+        "color": "#f95392",
+        "correctBox": 3
+      },
+      {
+        "color": "#dd4f87",
+        "correctBox": 3
+      },
+      {
+        "color": "#5b2af8",
+        "correctBox": 0
+      },
+      {
+        "color": "#f2345e",
+        "correctBox": 3
+      },
+      {
+        "color": "#a807df",
+        "correctBox": 1
+      },
+      {
+        "color": "#6832ea",
+        "correctBox": 0
+      },
+      {
+        "color": "#b822e8",
+        "correctBox": 1
+      },
+      {
+        "color": "#6820f0",
+        "correctBox": 0
+      },
+      {
+        "color": "#ea229a",
+        "correctBox": 3
+      },
+      {
+        "color": "#b226e9",
+        "correctBox": 1
+      },
+      {
+        "color": "#e44294",
+        "correctBox": 3
+      },
+      {
+        "color": "#fa5ee8",
+        "correctBox": 2
+      },
+      {
+        "color": "#6425e3",
+        "correctBox": 0
+      },
+      {
+        "color": "#ec3c96",
+        "correctBox": 3
+      },
+      {
+        "color": "#ff5ae9",
+        "correctBox": 2
+      },
+      {
+        "color": "#ef2ffe",
+        "correctBox": 2
+      },
+      {
+        "color": "#b836e9",
+        "correctBox": 1
+      },
+      {
+        "color": "#a61fff",
+        "correctBox": 1
+      },
+      {
+        "color": "#ec39b4",
+        "correctBox": 3
+      },
+      {
+        "color": "#ad28f6",
+        "correctBox": 1
+      },
+      {
+        "color": "#ab0beb",
+        "correctBox": 1
+      },
+      {
+        "color": "#fa29f6",
+        "correctBox": 2
+      },
+      {
+        "color": "#f0177a",
+        "correctBox": 3
+      }
+    ],
+    "meta": {
+      "levers": {
+        "minDistance": 0,
+        "maxDistance": 20,
+        "minDistinctness": 6,
+        "maxDistinctness": 50
+      },
+      "noise": {
+        "colorSpace": "rgb",
+        "noiseRatio": 0.25,
+        "weights": [
+          1,
+          1,
+          1,
+          1
+        ]
+      }
+    }
+  }
+]

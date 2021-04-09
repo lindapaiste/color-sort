@@ -1,4 +1,4 @@
-import {BallData as BallData_Old} from "../state/level/types";
+import {BallData as BallData_Old} from "../state/scale/types";
 import {addNoise, colorString, distance, RGB} from "./color-util";
 import {flatMap, isEqual, shuffle} from "lodash";
 import {BallData as BallData_New} from "../state/slotSwap/types";

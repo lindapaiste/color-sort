@@ -1,6 +1,6 @@
-import {I_Slot, LOCATIONS} from "../../state/level/types";
+import {I_Slot, LOCATIONS} from "../../state/scale/types";
 import {useLevelSelector} from "../../state";
-import {getBallLocation, getDropZones} from "../../state/level/selectors";
+import {getBallLocation, getDropZones} from "../../state/scale/selectors";
 import {Animated} from "react-native";
 import {
     PanGestureHandler,
@@ -12,11 +12,11 @@ import {
 import {findDropZone, useFindDropSlot} from "./findDropZone";
 import React, {createRef, PropsWithChildren} from "react";
 import {useDispatch} from "react-redux";
-import {moveBall, movePositionedBall, swapBalls} from "../../state/level/actions";
+import {moveBall, movePositionedBall, swapBalls} from "../../state/scale/actions";
 import {useActiveBallId, useActiveBallSlot, useActiveProps, useSetActiveBall} from "./useActiveBall";
 import {GestureHandlers} from "./GestureHandlers";
 import {PanTouchableHandler} from "./PanTouchableHandler";
-import {LocatedBall} from "../../state/level/types";
+import {LocatedBall} from "../../state/scale/types";
 
 export interface I_Point {
     x: number;

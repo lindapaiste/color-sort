@@ -1,5 +1,4 @@
-import {BallData, BoxData, LevelLayout} from "./types";
-import {SlotMap, StateShape as State} from "./reducer";
+import {BallData, BoxData, LevelLayout, BoxSwapState as State, SlotMap} from "./types";
 import {last, range} from "lodash";
 
 /**

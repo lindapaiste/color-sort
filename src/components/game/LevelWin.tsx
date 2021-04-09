@@ -2,7 +2,7 @@ import {FromGetStats, FromLevelWin, RenderWin} from "./RenderWin";
 import {useLevelSelector} from "../../state";
 import {useDispatch} from "react-redux";
 import React, {useEffect} from "react";
-import {completeLevel} from "../../state/user/actions";
+import {completeLevel} from "../../state/user/reducer";
 
 /**
  * dispatches completion of the level to redux
@@ -11,12 +11,18 @@ import {completeLevel} from "../../state/user/actions";
 export const LevelWin = ({id, getStats, ...rest}: { id: number, getStats: () => FromGetStats } & FromLevelWin) => {
     const {startTime, moves} = useLevelSelector(state => state.stats);
 
+    //TODO: needs to be in state or something
     const time = Date.now() - startTime;
 
     const dispatch = useDispatch();
 
     useEffect(() => {
-        dispatch(completeLevel(id, moves, time));
+        dispatch(completeLevel({
+            moves,
+            timestamp: Date.now(),
+            time: Date.now() - startTime,
+            level: id,
+        }));
     }, [id]);
 
     const stats = getStats(); //might involve hook calls

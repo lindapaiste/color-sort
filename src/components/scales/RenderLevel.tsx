@@ -1,4 +1,4 @@
-import {BallProps, LOCATIONS, LocIdMap} from "../../state/level/types";
+import {BallProps, LOCATIONS, LocIdMap} from "../../state/scale/types";
 import {LayoutChangeEvent, Text, View} from "react-native";
 import {styles} from "../../ui/styles";
 import {Scale} from "./Scale";

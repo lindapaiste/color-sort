@@ -1,4 +1,4 @@
-import {LOCATIONS} from "../state/level/types";
+import {LOCATIONS} from "../state/scale/types";
 import {findIndex} from "lodash";
 
 interface FromToCount {

@@ -1,6 +1,6 @@
-import {I_Slot} from "../../state/level/types";
+import {I_Slot} from "../../state/scale/types";
 import {useLevelSelector} from "../../state";
-import {getZoneRectangle} from "../../state/level/selectors";
+import {getZoneRectangle} from "../../state/scale/selectors";
 import {BoxSizes, LayoutSettings} from "../boxes/calcSizing";
 import {LayoutRectangle} from "react-native";
 import {useLayout} from "../boxes/LayoutRedux";

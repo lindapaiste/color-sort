@@ -4,7 +4,7 @@ import {PanGestureHandler, PanGestureHandlerStateChangeEvent, State} from "react
 import {findDropZone} from "./findDropZone";
 import React from "react";
 import {DragCallbacks} from "./DragOrTap";
-import {DropZoneMap, LOCATIONS} from "../../state/level/types";
+import {DropZoneMap, LOCATIONS} from "../../state/scale/types";
 
 export interface BaseDragProps {
     zones: Partial<DropZoneMap>,

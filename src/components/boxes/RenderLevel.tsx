@@ -1,6 +1,6 @@
 import React, {PropsWithChildren, useEffect, useRef} from "react";
 import {Animated, Text, TouchableHighlight, View} from "react-native";
-import {BallProps, LOCATIONS} from "../../state/level/types";
+import {BallProps, LOCATIONS} from "../../state/scale/types";
 import {colorString, RGB} from "../../util/color-util";
 import {BoxSizes, LayoutSettings} from "./calcSizing";
 import {chunk, random} from "lodash";

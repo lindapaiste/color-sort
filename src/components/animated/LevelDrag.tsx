@@ -5,15 +5,15 @@
  */
 
 import React from "react";
-import {I_Slot, LocatedBall} from "../../state/level/types";
+import {I_Slot, LocatedBall} from "../../state/scale/types";
 import {useLayout} from "../boxes/LayoutRedux";
 import {useLevelSelector} from "../../state";
-import {getDropZones, getLocIdMap} from "../../state/level/selectors";
+import {getDropZones, getLocIdMap} from "../../state/scale/selectors";
 import {useFindDropSlot2} from "./findDropZone";
 import {Animated} from "react-native";
 import {useActiveBallSlot, useActiveProps} from "./useActiveBall";
 import {useDispatch} from "react-redux";
-import {movePositionedBall, swapBalls} from "../../state/level/actions";
+import {movePositionedBall, swapBalls} from "../../state/scale/actions";
 import {GestureEvents, I_Point, MODE, withNullCallbacks} from "./DragOrTap";
 import {PropsWithChildren, useState} from "react";
 import {PanTouchableHandler} from "./PanTouchableHandler";

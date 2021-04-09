@@ -2,7 +2,7 @@ import React from "react";
 import {View} from "react-native";
 import {styles} from "../../ui/styles";
 import {ScaleDraggableBall} from "../animated/DraggableBall";
-import {BallProps, LOCATIONS} from "../../state/level/types";
+import {BallProps, LOCATIONS} from "../../state/scale/types";
 
 export interface Props {
     balls: BallProps[];

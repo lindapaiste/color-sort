@@ -1,11 +1,11 @@
 import React, {PropsWithChildren} from "react";
-import {LOCATIONS} from "../../state/level/types";
+import {LOCATIONS} from "../../state/scale/types";
 import {Animated, View} from "react-native";
 import {useActiveBallId, useSetActiveBall} from "./useActiveBall";
 import {useLevelSelector} from "../../state";
-import {getBallLocation} from "../../state/level/selectors";
+import {getBallLocation} from "../../state/scale/selectors";
 import {useDispatch} from "react-redux";
-import {moveBall, swapBalls} from "../../state/level/actions";
+import {moveBall, swapBalls} from "../../state/scale/actions";
 import {TapGestureHandler} from "react-native-gesture-handler";
 import {DragCallbacks, MODE} from "./DragOrTap";
 import {TouchableHighlight} from "react-native";

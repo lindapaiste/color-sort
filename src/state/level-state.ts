@@ -1,6 +1,6 @@
 import {Props} from "../components/game/ScaleLevel";
 import {useState} from "react";
-import {BallState, LOCATIONS} from "./level/types";
+import {BallState, LOCATIONS} from "./scale/types";
 import {generateScaleBalls} from "../util/generateScaleBalls";
 import {RGB} from "../util/color-util";
 

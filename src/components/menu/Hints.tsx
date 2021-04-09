@@ -1,5 +1,5 @@
 import {useLevelSelector} from "../../state";
-import {getCountWrong} from "../../state/level/selectors";
+import {getCountWrong} from "../../state/scale/selectors";
 import {TouchableHighlight, View} from "react-native";
 import React from "react";
 import {Text} from "react-native-paper";

@@ -1,10 +1,12 @@
 import {configureStore, combineReducers} from "@reduxjs/toolkit";
-import {reducer as level, StateShape as LevelShape} from "./level/reducer";
-import {reducer as user, StateShape as UserShape} from "./user/reducer";
-import {reducer as slotSwap, StateShape as SlotSwapShape} from "./slotSwap/reducer";
+import {reducer as level, StateShape as LevelShape} from "./scale/reducer";
+import {reducer as user} from "./user/reducer";
+import {reducer as slotSwap} from "./slotSwap/reducer";
 import {useSelector} from "react-redux";
+import {UserState} from "./user/types";
+import {BoxSwapState} from "./slotSwap/types";
 
-export const useUserSelector = <T>(selector: (subState: UserShape) => T): T => {
+export const useUserSelector = <T>(selector: (subState: UserState) => T): T => {
     return useSelector<RootState, T>(state => selector(state.user));
 };
 
@@ -12,14 +14,14 @@ export const useLevelSelector = <T>(selector: (subState: LevelShape) => T): T =>
     return useSelector<RootState, T>(state => selector(state.level));
 };
 
-export const useBoxSwapLevelSelector = <T>(selector: (subState: SlotSwapShape) => T): T => {
+export const useBoxSwapLevelSelector = <T>(selector: (subState: BoxSwapState) => T): T => {
     return useSelector<RootState, T>(state => selector(state.slotSwap));
 };
 
 interface RootState {
-    user: UserShape,
+    user: UserState,
     level: LevelShape,
-    slotSwap: SlotSwapShape,
+    slotSwap: BoxSwapState,
 }
 
 const reducer = combineReducers({
@@ -34,9 +36,9 @@ export const store = configureStore({
 
 /*import {createStore} from "redux";
 import {composeWithDevTools} from "redux-devtools-extension";
-import {reducer, StateShape} from "./reducer";
+import {reducer, State} from "./reducer";
 
-export const configureStore = (initialState?: StateShape) => {
+export const configureStore = (initialState?: State) => {
 
     //here is where to apply middleware, enhancers, etc.
 

@@ -1,10 +1,10 @@
-import {BallProps, LOCATIONS} from "../../state/level/types";
+import {BallProps, LOCATIONS} from "../../state/scale/types";
 import {useDispatch} from "react-redux";
-import {getDropZones} from "../../state/level/selectors";
+import {getDropZones} from "../../state/scale/selectors";
 import {Animated} from "react-native";
 import {PanGestureHandler, PanGestureHandlerStateChangeEvent, State} from "react-native-gesture-handler";
 import {findDropZone} from "./findDropZone";
-import {moveBall} from "../../state/level/actions";
+import {moveBall} from "../../state/scale/actions";
 import {colorString} from "../../util/color-util";
 import React from "react";
 import {useLevelSelector} from "../../state";

@@ -4,24 +4,22 @@ export interface Victory {
     time: number;
 }
 
-export type LevelVictories = Array<Victory> & {0: Victory};
+export type LevelVictories = Array<Victory> & { 0: Victory };
 
 //keyed by scales
 //value is either a non-empty array or undefined, cannot be an empty array
 export type VictoryData = Partial<Record<number, LevelVictories>>;
 
-export const COMPLETE_LEVEL = "COMPLETE_LEVEL";
+export type CompleteLevelPayload = Victory & {
+    level: number;
+}
 
-interface CompleteLevelAction {
-    type: typeof COMPLETE_LEVEL;
-    payload: {
-        level: number;
-        moves: number;
-        time: number;
-    };
-    meta: {
-        timestamp: number;
-    }
+export interface HasTimestamp {
+    timestamp: number;
+}
+
+export interface HasMetaTimestamp {
+    meta: HasTimestamp;
 }
 
 export interface MovesTime {
@@ -35,7 +33,6 @@ export type LevelBest = {
     completed: false;
 }
 
-
 export interface SettingsShape {
     volume: number;
     isSoundOn: boolean;
@@ -43,14 +40,10 @@ export interface SettingsShape {
     isLockCorrect: boolean;
 }
 
-export const UPDATE_SETTINGS = "UPDATE_SETTINGS";
-
-interface UpdateSettingsAction {
-    type: typeof UPDATE_SETTINGS;
-    payload: {
-        setting: keyof SettingsShape;
-        value: SettingsShape[keyof SettingsShape];
-    };
+/**
+ * can have other sections like preferences, purchases, etc.
+ */
+export interface UserState {
+    levelData: VictoryData,
+    settings: SettingsShape,
 }
-
-export type UserActionTypes = CompleteLevelAction | UpdateSettingsAction;

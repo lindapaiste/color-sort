@@ -1,7 +1,7 @@
-import {DropZoneMap, I_Slot, LOCATIONS} from "../../state/level/types";
+import {DropZoneMap, I_Slot, LOCATIONS} from "../../state/scale/types";
 import {LayoutRectangle} from "react-native";
 import {useLevelSelector} from "../../state";
-import {getDropZones, getLocIdMap} from "../../state/level/selectors";
+import {getDropZones, getLocIdMap} from "../../state/scale/selectors";
 import {useLayout} from "../boxes/LayoutRedux";
 
 /**

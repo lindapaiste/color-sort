@@ -1,24 +1,22 @@
-import {StateShape as State} from "./reducer";
-import {MovesTime, LevelBest, LevelVictories, SettingsShape} from "./types";
+import {LevelBest, LevelVictories, MovesTime, SettingsShape, UserState as State} from "./types";
 
 export const getLevelBest = (level: number) => (state: State): LevelBest => {
-    return levelBest( state.levelData[level] );
+    return levelBest(state.levelData[level]);
 };
 
 /**
- * should not have to individually check every scales because they are completed in order
+ * should not have to individually check every level because they are completed in order
  * can stop as soon as one is incomplete
- * return moves & time keyed by scales
+ * return moves & time keyed by level
  */
 export const getCompletedLevels = (first: number = 0, last: number = 19) => (state: State): MovesTime[] => {
     const result: MovesTime[] = [];
-    for ( let i = first; i <= last; i++ ) {
+    for (let i = first; i <= last; i++) {
         const best = getLevelBest(i)(state);
-        if ( best.completed ) {
+        if (best.completed) {
             const {moves, time} = best;
             result[i] = {moves, time};
-        }
-        else break;
+        } else break;
     }
     return result;
 };

@@ -111,3 +111,62 @@ interface UndoAction {
 }
 
 export type LevelActionTypes = SetLevelAction | SetLayoutAction | RestartLevelAction | SetSlotLayoutAction | SetActiveBallAction | SwapBallAction |SwapSlotBallAction| UndoAction;
+
+export type HistoryShape = Array<SlotMap>;
+export type SlotLayoutShape = Array<LayoutRectangle>;
+export type BoxesShape = BoxData[];
+//key by id for easy lookup, but also keep the id as a property for easy mapping
+export type BallsShape = Record<number, BallData>;
+
+export interface LevelStats {
+    startTime: number;
+    moves: number;
+    levelId: number;
+}
+
+export type ActiveShape = number | null;
+
+export interface ActiveState {
+    tappedSlotId?: number;
+    draggingSlotId?: number;
+    hoverTargetSlotId?: number;
+}
+
+export interface SetLevelPayload {
+    balls: BallData[];
+    boxes: BoxData[];
+    levelId: number;
+    timestamp: number;
+}
+
+
+export interface BoxSwapState {
+    /**
+     * key by id for easy lookup, but also keep the id as a property for easy mapping
+     */
+    balls: Record<number, BallData>;
+    /**
+     * an array of arrays
+     * each array is a map where the key is the slotId and the value is the ballId in that slot
+     */
+    locHistory: SlotMap[];
+    /**
+     * increment the number of moves, etc.
+     */
+    stats: LevelStats;
+    /**
+     * array keyed by slotId with the position of each slot
+     */
+    slots: LayoutRectangle[];
+    boxes: BoxData[];
+    /**
+     * store the id of the currently active ball and the current hover target
+     */
+    active: ActiveState;
+    /**
+     * numbers regarding the positioning of items on the screen
+     */
+    layout: LevelLayout;
+}
+
+export type SlotMap = Array<number>;

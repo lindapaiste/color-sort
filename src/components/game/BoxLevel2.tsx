@@ -6,7 +6,8 @@ import {useDimensions} from "../../ui/vwHooks";
 import {calcSizing} from "../boxes/calcSizing";
 import {PlayGeneratesProps} from "./PlayScreen";
 import {getIsWin, getLevelId} from "../../state/slotSwap/selectors";
-import {setLevelBalls, setLevelLayout, swapSlotBalls} from "../../state/slotSwap/actions";
+import {setLevel, swapSlotBalls} from "../../state/slotSwap/reducer";
+import {setLevelLayout} from "../../state/slotSwap/reducer";
 import {SwapController} from "../level-touch/SwapController";
 import {ExecuteSwap, SlotArray} from "../level-touch/types";
 import {findIsInCircle} from "../level-touch/useFindTarget";
@@ -76,7 +77,7 @@ export const BoxLevel = (props: BoxLevelProps & PlayGeneratesProps) => {
      */
     useEffect(
         () => {
-            dispatch(setLevelBalls(balls, boxes, id));
+            dispatch(setLevel({balls, boxes, levelId: id, timestamp: Date.now()}));
         },
         [balls, boxes, id]
     );
@@ -86,7 +87,7 @@ export const BoxLevel = (props: BoxLevelProps & PlayGeneratesProps) => {
      */
     const executeSwap: ExecuteSwap = (a, b) => {
         console.log("swapping", a, b);
-        dispatch(swapSlotBalls(a, b));
+        dispatch(swapSlotBalls([a, b]));
     };
 
     /**

@@ -2,8 +2,8 @@ import React, {ComponentType, FunctionComponent, useState} from "react";
 import {LayoutChangeEvent, View, ViewProps} from "react-native";
 import {LayoutRectangle} from "react-native";
 import {useDispatch} from "react-redux";
-import {LOCATIONS, ZoneId} from "../../state/level/types";
-import {setZoneLayout} from "../../state/level/actions";
+import {LOCATIONS, ZoneId} from "../../state/scale/types";
+import {setZoneLayout} from "../../state/scale/actions";
 
 export interface PropZoneId {
     zoneId: ZoneId;

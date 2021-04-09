@@ -1,5 +1,5 @@
 import {Props} from "../components/game/ScaleLevel";
-import {BallData, LOCATIONS} from "../state/level/types";
+import {BallData, LOCATIONS} from "../state/scale/types";
 import {getGradient} from "./color-util";
 import {shuffle} from "lodash";
 /**

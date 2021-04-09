@@ -1,11 +1,11 @@
 import React, {useEffect} from "react";
 import {RGB} from "../../util/color-util";
 import {useDispatch} from "react-redux";
-import {_scaleFilled_allLocBalls, getIsWin as getIsWin, getWrongBalls} from "../../state/level/selectors";
+import {_scaleFilled_allLocBalls, getIsWin as getIsWin, getWrongBalls} from "../../state/scale/selectors";
 import {RenderLevel} from "../scales/RenderLevel";
-import {setLevel, setZoneLayout} from "../../state/level/actions";
+import {setLevel, setZoneLayout} from "../../state/scale/actions";
 import {generateScaleBalls} from "../../util/generateScaleBalls";
-import {LOCATIONS} from "../../state/level/types";
+import {LOCATIONS} from "../../state/scale/types";
 import {LayoutChangeEvent} from "react-native";
 import {useLevelSelector} from "../../state";
 

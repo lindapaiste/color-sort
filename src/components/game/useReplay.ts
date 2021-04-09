@@ -1,7 +1,7 @@
 import {useDispatch} from "react-redux";
 import {useLevelSelector} from "../../state";
-import {getAllBalls} from "../../state/level/selectors";
-import {setLevel} from "../../state/level/actions";
+import {getAllBalls} from "../../state/scale/selectors";
+import {setLevel} from "../../state/scale/actions";
 
 /**
  * as currently designed, replay involves both selector and dispatch actions

@@ -1,8 +1,8 @@
 import {useDispatch} from "react-redux";
-import {setActiveBall} from "../../state/level/actions";
+import {setActiveBall} from "../../state/scale/actions";
 import {useLevelSelector} from "../../state";
-import {getActiveBall, getBallSlot} from "../../state/level/selectors";
-import {I_Slot, LOCATIONS} from "../../state/level/types";
+import {getActiveBall, getBallSlot} from "../../state/scale/selectors";
+import {I_Slot, LOCATIONS} from "../../state/scale/types";
 
 export interface ActiveProps {
     isActive: boolean,

@@ -7,7 +7,7 @@ import {setLevel, setZoneLayout} from "../../state/scale/actions";
 import {generateScaleBalls} from "../../util/generateScaleBalls";
 import {LOCATIONS} from "../../state/scale/types";
 import {LayoutChangeEvent} from "react-native";
-import {useLevelSelector} from "../../state";
+import {__useLevelSelector} from "../../state";
 
 export interface Props {
     count: number;
@@ -46,7 +46,7 @@ export const ScaleLevel = (props: Props & {onWin?: (p: Props) => void}) => {
         dispatch(setZoneLayout(location, zone));
     };
 
-    const isWin = useLevelSelector(getIsWin);
+    const isWin = __useLevelSelector(getIsWin);
 
 
     //will useEffects be evaluated in order?
@@ -60,14 +60,14 @@ export const ScaleLevel = (props: Props & {onWin?: (p: Props) => void}) => {
         }, [isWin]
     );
 
-    const wrong = useLevelSelector(getWrongBalls);
+    const wrong = __useLevelSelector(getWrongBalls);
     //console.log({wrong});
 
     return (
         <RenderLevel
             {...props}
-            isWin={useLevelSelector(getIsWin)}
-            ballMap={useLevelSelector(_scaleFilled_allLocBalls)}
+            isWin={__useLevelSelector(getIsWin)}
+            ballMap={__useLevelSelector(_scaleFilled_allLocBalls)}
             onLayoutZone={onLayoutZone}
         />
     );

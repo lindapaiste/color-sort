@@ -1,10 +1,10 @@
 import {FunctionComponent} from "react";
-import {useBoxSwapLevelSelector} from "../../state";
-import {getLayout} from "../../state/slotSwap/selectors";
+import {useSelector} from "../../state";
+import {selectLayout} from "../../state/slotSwap/selectors";
 import {LevelLayout} from "../../state/slotSwap/types";
 
 export const useLayout = (): LevelLayout => {
-    return useBoxSwapLevelSelector(getLayout)
+    return useSelector(selectLayout)
 };
 
 export const withSizing = <Props extends Partial<LevelLayout>>(Component: FunctionComponent<Props>): FunctionComponent<Omit<Props, keyof LevelLayout>> =>

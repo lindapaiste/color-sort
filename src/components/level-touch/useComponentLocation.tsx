@@ -1,4 +1,4 @@
-import {MutableRefObject, useRef, useState} from "react";
+import {MutableRefObject, useCallback, useRef, useState} from "react";
 import {View} from "react-native";
 import {PageLocation} from "./types";
 
@@ -17,7 +17,7 @@ export const useComponentLocation = (): Return => {
 
     const [location, setLocation] = useState<PageLocation | undefined>(undefined);
 
-    const onLayout = () => {
+    const onLayout = useCallback( () => {
         ref.current?.measure(
             (x, y, width, height, pageX, pageY) => {
                 setLocation({
@@ -25,7 +25,7 @@ export const useComponentLocation = (): Return => {
                     pageY
                 });
             });
-    };
+    }, [ref, setLocation]);
 
     return {
         ref,

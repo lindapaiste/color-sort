@@ -4,7 +4,6 @@ import {RBallParent} from "../animated/AnimatedBall";
 import React, {useCallback, useRef, useState} from "react";
 import {colorString, createRandom} from "../../util/color-util";
 import {swapIndexes} from "../../util/array-edit";
-import {findIsInCircle} from "./useFindTarget";
 import {View} from "react-native";
 import {ROverlayPosition} from "./OverlayPosition";
 import {RBasicBall} from "./BasicBall";
@@ -13,7 +12,9 @@ import {range} from "lodash";
 import {ExecuteSwap, SlotArray} from "./types";
 import {useGetSlotProps, useRegisterSlot} from "./ControllerContext";
 import {getScale} from "./getOverlayScale";
+import {findIsInCircle} from "./calc";
 
+//TODO: needs own ControllerContext Provider
 export const Tester = () => {
 
     const diameter = 50;

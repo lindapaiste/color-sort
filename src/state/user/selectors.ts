@@ -1,7 +1,8 @@
 import {LevelBest, LevelVictories, MovesTime, SettingsShape, UserState as State} from "./types";
+import {RootState} from "../index";
 
-export const getLevelBest = (level: number) => (state: State): LevelBest => {
-    return levelBest(state.levelData[level]);
+export const selectLevelBest = (level: number) => (state: RootState): LevelBest => {
+    return levelBest(state.user.levelData[level]);
 };
 
 /**
@@ -9,10 +10,10 @@ export const getLevelBest = (level: number) => (state: State): LevelBest => {
  * can stop as soon as one is incomplete
  * return moves & time keyed by level
  */
-export const getCompletedLevels = (first: number = 0, last: number = 19) => (state: State): MovesTime[] => {
+export const selectCompletedLevels = (first: number = 0, last: number = 19) => (state: RootState): MovesTime[] => {
     const result: MovesTime[] = [];
     for (let i = first; i <= last; i++) {
-        const best = getLevelBest(i)(state);
+        const best = selectLevelBest(i)(state);
         if (best.completed) {
             const {moves, time} = best;
             result[i] = {moves, time};
@@ -21,8 +22,8 @@ export const getCompletedLevels = (first: number = 0, last: number = 19) => (sta
     return result;
 };
 
-const getRawLevelData = (level: number) => (state: State): LevelVictories | undefined => {
-    return state.levelData[level];
+const selectRawLevelData = (level: number) => (state: RootState): LevelVictories | undefined => {
+    return state.user.levelData[level];
 };
 
 
@@ -49,10 +50,10 @@ export const levelBest = (data: LevelVictories | undefined): LevelBest => {
 
 //SETTINGS
 
-export const getAllSettings = (state: State): SettingsShape => {
-    return state.settings;
+export const selectAllSettings = (state: RootState): SettingsShape => {
+    return state.user.settings;
 };
 
-export const getSetting = <K extends keyof SettingsShape>(setting: K) => (state: State): SettingsShape[K] => {
-    return state.settings[setting];
+export const selectSetting = <K extends keyof SettingsShape>(setting: K) => (state: RootState): SettingsShape[K] => {
+    return state.user.settings[setting];
 };

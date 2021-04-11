@@ -1,5 +1,8 @@
-import {LayoutRectangle} from "react-native";
+import {Animated, GestureResponderHandlers, LayoutRectangle} from "react-native";
 import {BoxSizes, LayoutSettings} from "../../components/boxes/calcSizing";
+import {CompleteSlot, OverlayData, OverlayProps, PageLocation} from "../../components/level-touch/types";
+import {ReleaseLocation} from "../../components/level-touch/usePanTouch";
+import {useState} from "react";
 
 /**
  * want to store:
@@ -40,78 +43,6 @@ export interface LocatedBall {
 export interface LevelLayout extends LayoutSettings, Pick<BoxSizes, 'diameter' | 'slotSize' | 'boxPadding'> {
 }
 
-export const MOVE_BALL = 'ss_MOVE_BALL';
-export const SET_LEVEL = 'ss_SET_LEVEL';
-export const RESTART = 'ss_RESET_LEVEL';
-export const SET_SLOT_LAYOUT = 'ss_SET_SLOT_LAYOUT';
-export const SET_ACTIVE_BALL = 'ss_SET_ACTIVE_BALL';
-export const SWAP_BALL_IDS = 'ss_SWAP_BALLS';
-export const SWAP_SLOT_BALLS = 'ss_SWAP_SLOTS';
-export const UNDO = 'ss_UNDO';
-export const SET_LAYOUT = 'ss_SET_LEVEL_LAYOUT';
-
-interface SwapSlotBallAction {
-    type: typeof SWAP_SLOT_BALLS;
-    payload: {
-        slots: [number, number];
-    }
-}
-
-interface SwapBallAction {
-    type: typeof SWAP_BALL_IDS;
-    payload: {
-        ids: [number, number];
-    }
-}
-
-interface SetLevelAction {
-    type: typeof SET_LEVEL;
-    payload: {
-        balls: BallData[];
-        boxes: BoxData[];
-        levelId: number;
-    };
-    meta: {
-        timestamp: number;
-    }
-}
-
-interface SetLayoutAction {
-    type: typeof SET_LAYOUT;
-    payload: {
-        layout: LevelLayout;
-    };
-}
-
-interface SetSlotLayoutAction {
-    type: typeof SET_SLOT_LAYOUT;
-    payload: {
-        slot: number,
-        layout: LayoutRectangle,
-    }
-}
-
-interface SetActiveBallAction {
-    type: typeof SET_ACTIVE_BALL;
-    payload: {
-        id: number | null;
-    }
-}
-
-//would need to store initialLocation somewhere if it's anything other than all unassigned
-interface RestartLevelAction {
-    type: typeof RESTART;
-    meta: {
-        timestamp: number;
-    }
-}
-
-interface UndoAction {
-    type: typeof UNDO;
-}
-
-export type LevelActionTypes = SetLevelAction | SetLayoutAction | RestartLevelAction | SetSlotLayoutAction | SetActiveBallAction | SwapBallAction |SwapSlotBallAction| UndoAction;
-
 export type HistoryShape = Array<SlotMap>;
 export type SlotLayoutShape = Array<LayoutRectangle>;
 export type BoxesShape = BoxData[];
@@ -124,12 +55,45 @@ export interface LevelStats {
     levelId: number;
 }
 
-export type ActiveShape = number | null;
+export interface StartLocation extends PageLocation {
+    slotPageX: number;
+    slotPageY: number;
+    slotId: number;
+    timestamp: number;
+}
 
-export interface ActiveState {
-    tappedSlotId?: number;
-    draggingSlotId?: number;
-    hoverTargetSlotId?: number;
+export interface TouchState {
+    /**
+     * the location where the touch began
+     * should always have a slotId because don't save the start if not on a slot
+     */
+    touchStart?: StartLocation;
+    /**
+     * the location where the finger was lifted
+     * includes failed touches, but adds prop isSuccess to distinguish
+     */
+    touchRelease?: ({slotId?: number; timestamp: number;} & ReleaseLocation);
+    /**
+     * whether the current or just ended touch is a drag rather than a tap
+     */
+    isDrag: boolean;
+    /**
+     * whether or not the touch is active right now
+     */
+    isTouching: boolean;
+    /**
+     * the id of the slot which is being hovered over currently
+     */
+    hoveringOver?: number;
+    /**
+     * save the pressed slot, which is awaiting a second tap
+     */
+    pressed?: number;
+    /**
+     * for a tap pair, both balls are treated the same so a tuple of 2 ids is fine as order doesn't matter
+     * for a drag swap, target vs. pressed matters because need to know which to apply the translate to
+     */
+    overlay?: OverlayData[];
 }
 
 export interface SetLevelPayload {
@@ -139,12 +103,17 @@ export interface SetLevelPayload {
     timestamp: number;
 }
 
+export interface SlotData extends PageLocation {
+    boxId: number;
+    row: number;
+    column: number;
+}
 
 export interface BoxSwapState {
     /**
      * key by id for easy lookup, but also keep the id as a property for easy mapping
      */
-    balls: Record<number, BallData>;
+    balls: BallData[];
     /**
      * an array of arrays
      * each array is a map where the key is the slotId and the value is the ballId in that slot
@@ -155,14 +124,17 @@ export interface BoxSwapState {
      */
     stats: LevelStats;
     /**
-     * array keyed by slotId with the position of each slot
+     * array keyed by slotId with information about each slot, including the position
      */
-    slots: LayoutRectangle[];
+    slots: SlotData[];
+    /**
+     * data for each box
+     */
     boxes: BoxData[];
     /**
      * store the id of the currently active ball and the current hover target
      */
-    active: ActiveState;
+    touch: TouchState;
     /**
      * numbers regarding the positioning of items on the screen
      */

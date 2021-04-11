@@ -1,8 +1,5 @@
 import {AnimatedLocation, AnimatedOffset, TimedLocation, TimedOffset} from "./types";
-import {Animated, ViewProps} from "react-native";
-import {withProps} from "../../util/withProps";
-import React, {PropsWithChildren} from "react";
-import {RPositioned} from "./Positioned";
+import React from "react";
 import {pageXyToOffset} from "./calc";
 
 /**

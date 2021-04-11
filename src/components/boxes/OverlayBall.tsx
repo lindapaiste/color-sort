@@ -3,8 +3,8 @@ import {OverlayProps} from "../level-touch/types";
 import {ROverlayPosition} from "../level-touch/OverlayPosition";
 import {RBasicBall} from "../level-touch/BasicBall";
 import {useLayout} from "./LayoutRedux";
-import {useBoxSwapLevelSelector} from "../../state";
-import {getSlotColor} from "../../state/slotSwap/selectors";
+import { useSelector} from "../../state";
+import {selectColorBySlotId} from "../../state/slotSwap/selectors";
 
 /**
  * takes the overlay props to get position and scale,
@@ -13,7 +13,7 @@ import {getSlotColor} from "../../state/slotSwap/selectors";
 export const RenderOverlayBall = (props: OverlayProps) => {
 
     const {slotSize, diameter} = useLayout();
-    const color = useBoxSwapLevelSelector(getSlotColor(props.slot));
+    const color = useSelector(selectColorBySlotId(props.slot));
 
     return (
         <ROverlayPosition {...props}>

@@ -1,6 +1,6 @@
 import {useDispatch} from "react-redux";
 import {setActiveBall} from "../../state/scale/actions";
-import {useLevelSelector} from "../../state";
+import {__useLevelSelector} from "../../state";
 import {getActiveBall, getBallSlot} from "../../state/scale/selectors";
 import {I_Slot, LOCATIONS} from "../../state/scale/types";
 
@@ -14,7 +14,7 @@ export interface ActiveProps {
  * want these two hooks to be the signature even if I change how it is stored
  */
 export const useActiveBallId = (): number | null => {
-    return useLevelSelector(getActiveBall);
+    return __useLevelSelector(getActiveBall);
 };
 export const useSetActiveBall = (): (id: number | null) => void => {
     const dispatch = useDispatch();
@@ -23,7 +23,7 @@ export const useSetActiveBall = (): (id: number | null) => void => {
 
 export const useActiveBallSlot = (): (I_Slot & {id: number})  | null => {
     const id = useActiveBallId();
-    const slot = useLevelSelector(getBallSlot(id));
+    const slot = __useLevelSelector(getBallSlot(id));
 
     if (id === null || slot === null) {
         return null;

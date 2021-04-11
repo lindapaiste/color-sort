@@ -4,12 +4,12 @@ import {RenderLevel, ZoneData} from "../boxes/RenderLevel";
 import {generateBoxBallsOld, Levers} from "../../util/generateBoxBalls";
 import {useDispatch} from "react-redux";
 import {setLevel} from "../../state/scale/actions";
-import {useLevelSelector, useUserSelector} from "../../state";
+import {__useLevelSelector, useSelector} from "../../state";
 import {getIsWin, getLocBallMap, getWrongBalls} from "../../state/scale/selectors";
 import {LOCATIONS} from "../../state/scale/types";
 import {useDimensions} from "../../ui/vwHooks";
 import {calcSizing} from "../boxes/calcSizing";
-import {getAllSettings, getSetting} from "../../state/user/selectors";
+import {selectAllSettings, selectSetting} from "../../state/user/selectors";
 import {PlayGeneratesProps} from "./PlayScreen";
 
 export interface _BoxLevelProps {
@@ -27,8 +27,8 @@ export const _BoxLevel = (props: _BoxLevelProps & PlayGeneratesProps) => {
 
     const {id, colors, ballsPerRow, rowsPerBox, levers, onWin} = props;
 
-    const noErrors = useLevelSelector(getIsWin);
-    const playingLevel = useLevelSelector(state => state.stats.levelId );
+    const noErrors = __useLevelSelector(getIsWin);
+    const playingLevel = __useLevelSelector(state => state.stats.levelId );
     const isWin = noErrors && id === playingLevel;
 
     //will useEffects be evaluated in order?
@@ -63,9 +63,9 @@ export const _BoxLevel = (props: _BoxLevelProps & PlayGeneratesProps) => {
         [colors, ballsPerRow, rowsPerBox]
     );
 
-    const ballMap = useLevelSelector(getLocBallMap);
+    const ballMap = __useLevelSelector(getLocBallMap);
 
-    const wrongBalls = useLevelSelector(getWrongBalls);
+    const wrongBalls = __useLevelSelector(getWrongBalls);
     //console.log("count incorrect: " + wrongBalls.length);
     //console.log(wrongBalls);
 
@@ -77,9 +77,9 @@ export const _BoxLevel = (props: _BoxLevelProps & PlayGeneratesProps) => {
 
     //console.log(zones);
 
-    //console.log(useLevelSelector(s => s));
+    //console.log(__useLevelSelector(s => s));
 
-    const settings = useUserSelector(getAllSettings); //for now...
+    const settings = useSelector(selectAllSettings); //for now...
 
     return (
         <RenderLevel

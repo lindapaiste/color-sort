@@ -2,7 +2,7 @@ import React, {PropsWithChildren} from "react";
 import {LOCATIONS} from "../../state/scale/types";
 import {Animated, View} from "react-native";
 import {useActiveBallId, useSetActiveBall} from "./useActiveBall";
-import {useLevelSelector} from "../../state";
+import {__useLevelSelector} from "../../state";
 import {getBallLocation} from "../../state/scale/selectors";
 import {useDispatch} from "react-redux";
 import {moveBall, swapBalls} from "../../state/scale/actions";
@@ -24,7 +24,7 @@ export const TapOnly = ({
 
     const setActiveId = useSetActiveBall();
 
-    const activeBallZone = useLevelSelector(getBallLocation(activeId));
+    const activeBallZone = __useLevelSelector(getBallLocation(activeId));
 
     //make this conditional in case active id was already overwritten by something else
     const deactivate = () => {

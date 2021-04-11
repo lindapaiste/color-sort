@@ -1,11 +1,11 @@
 import React from "react";
 import {RGB} from "../../util/color-util";
-import {useLevelSelector} from "../../state";
+import {__useLevelSelector} from "../../state";
 import {getBallColor} from "../../state/scale/selectors";
 import {RenderBall, Props as RenderProps} from "./RenderBall";
 
 export const useBallColor = (id: number): RGB => {
-    return useLevelSelector(getBallColor(id))
+    return __useLevelSelector(getBallColor(id))
 };
 
 export interface PropId {

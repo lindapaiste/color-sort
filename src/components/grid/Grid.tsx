@@ -1,9 +1,6 @@
 import React from "react";
-import {useUserSelector} from "../../state";
-import {getCompletedLevels, levelBest} from "../../state/user/selectors";
 import {FlatList, View} from "react-native";
 import {Props as ThumbProps, Thumb} from "./Thumb";
-import {getLevel} from "../../data/levels";
 import {colorString, createRandom, getMedian} from "../../util/color-util";
 import {range, clamp} from "lodash";
 import {useDimensions} from "../../ui/vwHooks";

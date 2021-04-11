@@ -1,4 +1,4 @@
-import {useLevelSelector} from "../../state";
+import {__useLevelSelector} from "../../state";
 import {getCountWrong} from "../../state/scale/selectors";
 import {TouchableHighlight, View} from "react-native";
 import React from "react";
@@ -6,7 +6,7 @@ import {Text} from "react-native-paper";
 import {makeModal} from "./Modal";
 
 export const Hints = ({close}: { close: () => void }) => {
-    const incorrect = useLevelSelector(getCountWrong);
+    const incorrect = __useLevelSelector(getCountWrong);
 
     return (
         <View>

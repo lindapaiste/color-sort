@@ -1,5 +1,8 @@
-import {BallData, BoxData, LevelLayout, BoxSwapState as State, SlotMap} from "./types";
+import {BallData, BoxData, BoxSwapState as State, LevelLayout, StartLocation} from "./types";
 import {last, range} from "lodash";
+import {RootState} from "../index";
+import {createSelector} from "@reduxjs/toolkit";
+import {OverlayData} from "../../components/level-touch/types";
 
 /**
  * what really matters are the selectors and the action creators
@@ -14,118 +17,115 @@ import {last, range} from "lodash";
 
 //----------------------------------WITHOUT PROPS-----------------------------------------//
 
-export const getIsWin = (state: State): boolean => {
-    //.every() is faster because can stop as soon as any are incorrect
-    return state.stats.moves > 0 && getSlotMap(state).every((_, slot) => getIsSlotCorrect(slot)(state))
+const selectLocHistory = (state: RootState) => state.slotSwap.locHistory;
+
+export const selectSlotMap = createSelector(
+    selectLocHistory,
+    (history) => last(history) || []
+);
+
+export const selectMoveCount = (state: RootState): number => {
+    return state.slotSwap.stats.moves;
 };
 
-export const getCountWrong = (state: State): number => {
-    return getWrongIds(state).length;
+export const selectLevelId = (state: RootState): number => {
+    return state.slotSwap.stats.levelId;
 };
 
-export const getWrongIds = (state: State): number[] => {
-    return getSlotMap(state).filter((_, slot) => !getIsSlotCorrect(slot)(state));
+export const selectBallDataMap = (state: RootState) => state.slotSwap.balls;
+
+export const selectSlotDataMap = (state: RootState) => state.slotSwap.slots;
+
+export const selectBoxDataMap = (state: RootState) => state.slotSwap.boxes;
+
+export const selectIsWin = createSelector(
+    selectLocHistory,
+    selectBallDataMap,
+    selectSlotDataMap,
+    (history, balls, slots) => {
+        const slotMap = last(history) || [];
+        return history.length > 1 && slotMap.every(
+            (ballId, slotId) => balls[ballId].correctBox === slots[slotId].boxId
+        );
+    }
+);
+
+export const selectLayout = (state: RootState): LevelLayout => {
+    return state.slotSwap.layout;
 };
 
-export const getMoveCount = (state: State): number => {
-    return state.stats.moves;
-};
+export const selectBallsPerBox = createSelector(
+    selectLayout,
+    ({rowsPerBox, ballsPerRow}) => rowsPerBox * ballsPerRow
+);
 
-export const getElapsedTime = (state: State): number => {
-    return Date.now() - state.stats.startTime;
-};
+export const selectBoxCount = (state: RootState): number => state.slotSwap.boxes.length;
 
-export const getLayout = (state: State): LevelLayout => {
-    return state.layout;
-};
+export const selectBallCount = (state: RootState): number => state.slotSwap.balls.length;
 
-export const getBallsPerBox = (state: State): number => {
-    const {rowsPerBox, ballsPerRow} = getLayout(state);
-    return rowsPerBox * ballsPerRow;
-};
+export const selectPressedSlotId = (state: RootState): number | undefined => state.slotSwap.touch.pressed;
 
-export const getSlotMap = (state: State): SlotMap => {
-    return last(state.locHistory) || [];
-};
+export const selectTouchedSlotId = (state: RootState): number | undefined =>
+    state.slotSwap.touch.isTouching ? state.slotSwap.touch.touchStart?.slotId : undefined;
 
-export const getLevelId = (state: State): number => {
-    return state.stats.levelId;
-};
+export const selectHoveredSlotId = (state: RootState): number | undefined => state.slotSwap.touch.hoveringOver;
+
+export const selectIsTouching = (state: RootState): boolean => state.slotSwap.touch.isTouching;
+
+export const selectIsDragging = (state: RootState): boolean => state.slotSwap.touch.isDrag;
+
+export const selectOverlayData = (state: RootState): OverlayData[] | undefined => state.slotSwap.touch.overlay;
+
+export const selectTouchStart = (state: RootState): StartLocation | undefined => state.slotSwap.touch.touchStart;
 
 //-------------------------------WITH PROPS--------------------------------------------//
 
-export const getSlotProps = (slot: number) =>
-    (state: State) => {
-        const boxId = getSlotBox(slot)(state);
-        const boxColor = getBoxColor(boxId)(state);
-        const ballId = getSlotBallId(slot)(state);
-        const {correctBox, color} = getBallData(ballId)(state);
-        const isCorrect = correctBox === boxId;
-
-        return {
-            isCorrect,
-            boxColor,
-            boxId,
-            ballId,
-            color,
-        }
+export const selectColorByBallId = (id: number) =>
+    (state: RootState): string => {
+        return state.slotSwap.balls[id].color;
     };
 
-export const getIsSlotCorrect = (slot: number) =>
-    (state: State): boolean => {
-        const box = getSlotBox(slot)(state);
-        const ball = getSlotBallId(slot)(state);
-        const correct = getBallData(ball)(state).correctBox;
-        return correct === box;
+export const selectColorBySlotId = (slot: number) =>
+    (state: RootState): string => {
+        const ballId = selectBallIdForSlotId(slot)(state);
+        return selectColorByBallId(ballId)(state);
     };
 
-export const getBallColor = (id: number) =>
-    (state: State): string => {
-        return state.balls[id].color;
+export const selectBoxColorById = (box: number) =>
+    (state: RootState): string => {
+        return state.slotSwap.boxes[box].color;
     };
 
-export const getSlotColor = (slot: number) =>
-    (state: State): string => {
-        const ballId = getSlotBallId(slot)(state);
-        return getBallColor(ballId)(state);
+export const selectBoxDataById = (box: number) =>
+    (state: RootState): BoxData => {
+        return state.slotSwap.boxes[box];
     };
 
-export const getBoxColor = (box: number) =>
-    (state: State): string => {
-        return state.boxes[box].color;
-    };
-
-export const getBox = (box: number) =>
-    (state: State): BoxData => {
-        return state.boxes[box];
-    };
-
-export const getBoxSlots = (box: number) =>
-    (state: State): number[] => {
-        const ballsPerBox = getBallsPerBox(state);
+export const selectSlotIdsForBoxId = (box: number) =>
+    (state: RootState): number[] => {
+        const ballsPerBox = selectBallsPerBox(state);
         return range(ballsPerBox * box, ballsPerBox * (box + 1))
     };
 
-export const getSlotBox = (slot: number) =>
-    (state: State): number => {
-        const ballsPerBox = getBallsPerBox(state);
-        return Math.floor(slot / ballsPerBox);
+export const selectBoxForSlotId = (slot: number) =>
+    (state: RootState): number => {
+        return state.slotSwap.slots[slot].boxId;
     };
 
-export const getSlotBallId = (slot: number) =>
-    (state: State): number => {
-        return getSlotMap(state)[slot];
+export const selectBallIdForSlotId = (slot: number) =>
+    (state: RootState): number => {
+        return selectSlotMap(state)[slot];
     };
 
 //returns -1 if not found
-export const getBallSlot = (id: number) =>
-    (state: State): number => {
-        return getSlotMap(state).indexOf(id);
+export const selectSlotIdForBallId = (id: number) =>
+    (state: RootState): number => {
+        return selectSlotMap(state).indexOf(id);
     };
 
-export const getBallData = (id: number) =>
-    (state: State): BallData => {
-        return state.balls[id];
+export const selectBallDataById = (id: number) =>
+    (state: RootState): BallData => {
+        return state.slotSwap.balls[id];
     };
 
 //-------------------------------HELPER--------------------------------------------//
@@ -139,11 +139,3 @@ export const isValidBall = (id: number) =>
     (state: State): boolean => {
         return state.balls[id] !== undefined;
     };
-
-export const getBoxIndexes = (state: State): number[] => {
-  return [...state.boxes.keys()];
-};
-
-export const getSlotIndexes = (state: State): number[] => {
-  return [...getSlotMap(state).keys()];
-};

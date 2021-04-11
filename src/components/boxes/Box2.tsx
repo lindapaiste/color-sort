@@ -2,8 +2,8 @@ import React, {PropsWithChildren} from "react";
 import {Animated} from "react-native";
 import {useDimensions} from "../../ui/vwHooks";
 import {styles} from "../../ui/styles";
-import {useBoxSwapLevelSelector} from "../../state";
-import {getBoxColor, getLayout} from "../../state/slotSwap/selectors";
+import {useSelector} from "../../state";
+import {selectBoxColorById, selectLayout} from "../../state/slotSwap/selectors";
 import {CProps} from "./Box";
 import {random} from "lodash";
 
@@ -18,8 +18,8 @@ import {random} from "lodash";
 
 
 export const CBox = ({index, children, winEffectTiming}: PropsWithChildren<CProps>) => {
-    const color = useBoxSwapLevelSelector(getBoxColor(index));
-    const {boxPadding} = useBoxSwapLevelSelector(getLayout); //is the min of vw or vh
+    const color = useSelector(selectBoxColorById(index));
+    const {boxPadding} = useSelector(selectLayout); //is the min of vw or vh
 
     const timingOffset = random(-.1, .1, true);
     const screenWidth = useDimensions().width;

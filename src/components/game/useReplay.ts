@@ -1,5 +1,5 @@
 import {useDispatch} from "react-redux";
-import {useLevelSelector} from "../../state";
+import {__useLevelSelector} from "../../state";
 import {getAllBalls} from "../../state/scale/selectors";
 import {setLevel} from "../../state/scale/actions";
 
@@ -13,9 +13,9 @@ import {setLevel} from "../../state/scale/actions";
  * hook returns a function -- doesn't call automatically
  */
 export const useReplay = (): () => void => {
-    const balls = useLevelSelector(getAllBalls);
+    const balls = __useLevelSelector(getAllBalls);
 
-    const id = useLevelSelector(state => state.stats.levelId);
+    const id = __useLevelSelector(state => state.stats.levelId);
     const dispatch = useDispatch();
 
     return () => {

@@ -1,11 +1,13 @@
-import React, {PropsWithChildren, useEffect} from "react";
+import React, {PropsWithChildren, useCallback, useEffect} from "react";
 import {View} from "react-native";
 import {slotDimensions} from "../boxes/BallSlot";
 import {useComponentLocation} from "./useComponentLocation";
-import {useLayout} from "../boxes/LayoutRedux";
-import {PropSlot, RegisterFunction} from "./types";
-import {useRegisterSlot} from "./ControllerContext";
+import {PageLocation, PropSlot, RegisterFunction} from "./types";
 import {styles} from "../../ui/styles";
+import {useSelector} from "../../state";
+import {useDispatch} from "react-redux";
+import {registerSlotLayout} from "../../state/slotSwap/reducer";
+import {selectLayout} from "../../state/slotSwap/selectors";
 
 /**
  * can use onLayout event to get height/width and X/Y relative to the parent
@@ -49,7 +51,17 @@ export const RRegisteredSlot = ({slot, register, slotSize, children}: PropsWithC
 };
 
 export const CRegisteredSlot = ({slot, children}: PropsWithChildren<PropSlot>) => {
-    const register = useRegisterSlot();
-    const {slotSize} = useLayout();
-    return RRegisteredSlot({register, slotSize, slot, children});
+    const dispatch = useDispatch();
+    const {slotSize} = useSelector(selectLayout);
+    const register = useCallback( (slotId: number, location: PageLocation) => {
+        dispatch(registerSlotLayout({id: slotId,location}));
+    }, [dispatch]);
+    return (
+        <RRegisteredSlot
+            register={register}
+            slotSize={slotSize}
+            slot={slot}
+            children={children}
+        />
+    )
 };

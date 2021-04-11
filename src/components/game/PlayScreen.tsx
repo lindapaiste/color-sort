@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useCallback, useEffect, useRef, useState} from "react";
 import {styles} from "../../ui/styles";
 import {Animated, TouchableHighlight, View} from "react-native";
 import {useReplay} from "./useReplay";
@@ -6,7 +6,8 @@ import {STATES} from "../animated/useLevelAnimation";
 import {Text} from "react-native-paper";
 import {LevelWin} from "./LevelWin";
 import {I_PackPlay} from "../../data/types";
-
+import {useDispatch} from "react-redux";
+import {restart} from "../../state/slotSwap/reducer";
 
 /**
  * use of useReplay hook here ties this to the box swap state -- find another way
@@ -65,23 +66,25 @@ export const PlayScreen = <Props extends {}>({pack, startLevel = 1}: { startLeve
         //todo: return cleanup to stop animation
     }, [state]);
 
-    const onPressNext = () => {
-        setLevelId(levelId + 1);
+    const onPressNext = useCallback(() => {
+        setLevelId(id => id + 1);
         setState(STATES.LOADING_IN);
         //this is where I would use nextLevelProps
-    };
+    }, [setLevelId, setState]);
 
-    const onWin = () => {
+    const onWin = useCallback(() => {
         setState(STATES.WIN_TRANSITION);
-    };
+    }, []);
 
-    const replay = useReplay();
+//    const replay = useReplay();
 
-    const onPressReplay = () => {
+    const dispatch = useDispatch();
+
+    const onPressReplay = useCallback( () => {
         //need to replay with same balls, but reset to original state
-        replay();
+        dispatch(restart({timestamp: Date.now()}));
         setState(STATES.LOADING_IN);
-    };
+    }, [setState, dispatch]);
 
     /**
      * cannot use selector isWin here because will return true before the scales has been loaded
@@ -91,13 +94,13 @@ export const PlayScreen = <Props extends {}>({pack, startLevel = 1}: { startLeve
      * want to preload next level props for smoother load in
      */
 
-    const loadLevelProps = (id: number): Props & { id: number } => {
+    const loadLevelProps = useCallback( (id: number): Props & { id: number } => {
         const props = pack.getLevelProps(levelId);
         return {
             ...props,
             id,
         }
-    };
+    }, [pack]);
 
     const [levelProps, setLevelProps] = useState<Props & { id: number }>(loadLevelProps(startLevel));
 
@@ -160,7 +163,6 @@ export const PlayScreen = <Props extends {}>({pack, startLevel = 1}: { startLeve
             }
         </View>
     )
-
 };
 
 

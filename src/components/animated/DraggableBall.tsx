@@ -7,7 +7,7 @@ import {findDropZone} from "./findDropZone";
 import {moveBall} from "../../state/scale/actions";
 import {colorString} from "../../util/color-util";
 import React from "react";
-import {useLevelSelector} from "../../state";
+import {__useLevelSelector} from "../../state";
 /**
  * right now is connecting to redux for select drop zones and dispatch moveBall, but could get these passed down
  */
@@ -42,7 +42,7 @@ export const DraggableBall = ({onChangeZone, ...ballProps}: BallProps & {onChang
 
     const {color, currentLocation} = ballProps;
 
-    const zones = useLevelSelector(getDropZones);
+    const zones = __useLevelSelector(getDropZones);
 
     const xy = new Animated.ValueXY({x: 0, y: 0});
     const diameter = new Animated.Value(initialDiameter);

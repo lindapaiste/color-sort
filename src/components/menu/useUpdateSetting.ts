@@ -1,7 +1,7 @@
 import {SettingsShape} from "../../state/user/types";
 import {useDispatch} from "react-redux";
-import {useUserSelector} from "../../state";
-import {getSetting} from "../../state/user/selectors";
+import {useSelector} from "../../state";
+import {selectSetting} from "../../state/user/selectors";
 import {updateSettings} from "../../state/user/reducer";
 import {useCallback} from "react";
 
@@ -15,7 +15,7 @@ export const useUpdateSettingProps = <K extends keyof SettingsShape>(setting: K)
 
     const dispatch = useDispatch();
 
-    const value = useUserSelector(getSetting(setting));
+    const value = useSelector(selectSetting(setting));
 
     const setValue = useCallback((value: SettingsShape[K]) => {
         dispatch(updateSettings({[setting]: value}));

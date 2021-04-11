@@ -1,6 +1,6 @@
 import {DropZoneMap, I_Slot, LOCATIONS} from "../../state/scale/types";
 import {LayoutRectangle} from "react-native";
-import {useLevelSelector} from "../../state";
+import {__useLevelSelector} from "../../state";
 import {getDropZones, getLocIdMap} from "../../state/scale/selectors";
 import {useLayout} from "../boxes/LayoutRedux";
 
@@ -74,7 +74,7 @@ const withUseOverflowFix = <Args extends any[]>(finder: SlotFinder<Args>): SlotF
 
         //selecting from redux cannot be conditional
         //so select the whole map because location might not be defined or valid
-        const map = useLevelSelector(getLocIdMap);
+        const map = __useLevelSelector(getLocIdMap);
 
         if (slot) {
             const maxPosition = (map[slot.location] || []).length;
@@ -93,7 +93,7 @@ const withUseOverflowFix = <Args extends any[]>(finder: SlotFinder<Args>): SlotF
  */
 export const useFindDropSlot = (): (x: number, y: number) => I_Slot | undefined => {
 
-    const zones = useLevelSelector(getDropZones);
+    const zones = __useLevelSelector(getDropZones);
 
     const layout = useLayout();
 
@@ -106,7 +106,7 @@ export const useFindDropSlot = (): (x: number, y: number) => I_Slot | undefined 
  */
 export const useFindDropSlot2 = (): (x: number, y: number) => I_Slot | undefined => {
 
-    const zones = useLevelSelector(getDropZones);
+    const zones = __useLevelSelector(getDropZones);
 
     const layout = useLayout();
 

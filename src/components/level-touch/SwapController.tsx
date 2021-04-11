@@ -1,11 +1,18 @@
-import React, {ComponentType, PropsWithChildren, useCallback, useEffect, useRef, useState} from "react";
+import React, {ComponentType, PropsWithChildren, useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {Animated, View, ViewProps} from "react-native";
-import {SlotArray} from "./types";
-import {useSlotRegistry} from "./useSlotRegistry";
-import {usePanTouch} from "./usePanTouch";
+import {CompleteSlot, ExecuteSwap, OverlayData, OverlayProps, OverlayType, SlotArray, XY} from "./types";
 import {Portal} from "react-native-paper";
-import {CompleteSlot, ExecuteSwap, OverlayProps, OverlayType, PageLocation} from "./types";
-import {ControllerContext} from "./ControllerContext";
+import {useSelector} from "../../state";
+import {
+    selectHoveredSlotId, selectIsDragging,
+    selectOverlayData,
+    selectPressedSlotId,
+    selectSlotDataMap,
+    selectTouchedSlotId, selectTouchStart
+} from "../../state/slotSwap/selectors";
+import {hoveredOverSlot} from "../../state/slotSwap/reducer";
+import {useReduxPanResponder} from "./useReduxPanResponder";
+import {useDispatch} from "react-redux";
 
 /**
  * use slot ids rather than ball ids because when looking up by location it is easier to find the slot than the ball
@@ -17,86 +24,96 @@ interface Props {
     RenderOverlayBall: ComponentType<OverlayProps>;
 }
 
+
 /**
+ * what happens when tap and drag are mixed?
+ * looked at I Love Hue Too
+ * one ball is active, blinking and awaiting a target
+ * touch another ball and hold it -- nothing happens until release
+ * drag from another ball to off area -- cancels active ball
+ * it never "picks up" the ball at the start location
+ * if the finger goes from one ball to another, it will swap the original blinking ball with where it was released
+ */
+
+/**
+ * wrap in a try/catch to avoid errors on Animated.ValueXY which occur when the removed listener doesn't exist
+ */
+export const safeRemoveListener = (animation: Animated.Value | Animated.ValueXY, listenerId: string) => {
+    try {
+        animation.removeListener(listenerId);
+    } catch (e) {
+
+    }
+}
+
+/**
+ * refactored so that all stateful logic is in Redux
+ * know the SwapController is responsible for:
+ * running animations
+ * rendering overlay
+ * dispatching actions
+ * passing gesture handlers to View
+ *
  * SwapController knows:
  *
  * internally:
- * the ids and positions of all slots it controls
- * the current touch
+ * the current touch position
  *
  * from props:
  * how to find the slot at a given location (so it can deal with circles, ignore disabled, etc)
  * how to dispatch a swap
  * how to render the dragging or swapping overlays
  *
+ * from redux:
+ * swap overlay data
+ * pressed slot id
+ * the locations of all slots
+ *
  * it wraps its children in a context provider so that they can access the swap/touch/selection state
  *
- * now using Portal to place overlays ate the root, so no longer need to know containerOffset
+ * now using Portal to place overlays at the root, so no longer need to know containerOffset
  */
-export const SwapController = ({executeSwap, findTarget, RenderOverlayBall, ...props}: PropsWithChildren<Props & ViewProps>) => {
+export const SwapController = ({
+                                   executeSwap,
+                                   findTarget,
+                                   RenderOverlayBall,
+                                   ...props
+                               }: PropsWithChildren<Props & ViewProps>) => {
 
-    const {slotAreas, registerSlot} = useSlotRegistry();
+    console.log("SwapController re-rendered");
 
-    /**
-     * save the pressed slot, which is awaiting a second tap
-     */
-    const [pressed, setPressed] = useState<CompleteSlot | null>(null);
+    const dispatch = useDispatch();
 
-    /**
-     * for a tap pair, both balls are treated the same so a tuple of 2 ids is fine as order doesn't matter
-     * for a drag swap, target vs. pressed matters because need to know which to apply the translate to
-     */
-    const [overlay, setOverlay] = useState<Array<OverlayProps>>([]);
+    const slotAreas = useSelector(selectSlotDataMap);
+
+    const pressedSlotId = useSelector(selectPressedSlotId);
+
+    const touchedSlotId = useSelector(selectTouchedSlotId);
+
+    const hoverSlotId = useSelector(selectHoveredSlotId);
+
+    const overlay = useSelector(selectOverlayData);
+
+    const touchStart = useSelector(selectTouchStart);
+
+    const isDragging = useSelector(selectIsDragging);
 
     const swapEffectTimer = useRef(new Animated.Value(0)).current;
 
-    /**
-     * helper for generating overlay ball props for each of the swap pair
-     */
-    const swapProps = useCallback( (slot: CompleteSlot, targetSlot: CompleteSlot, isPrimary: boolean, overlayType: OverlayType): OverlayProps => ({
-        slot: slot.slot,
-        start: slot,
-        end: targetSlot,
-        timer: swapEffectTimer,
-        isPrimary,
-        overlayType,
-    }), [swapEffectTimer]);
 
     /**
-     * handle taps differently depending on whether it is the first or the second
+     * Animated Value stores the current touch position
+     * set by onMove event
      */
-    const onTapSlot = (slot: CompleteSlot | null) => {
-        /**
-         * activate slot on first press
-         */
-        if (pressed === null) {
-            setPressed(slot);
-        }
-        /**
-         * deactivate on repeat press of same slot
-         * or on outside click
-         */
-        else if ( slot === null || pressed.slot === slot.slot ) {
-            setPressed(null);
-        }
-        /**
-         * swap on second press
-         */
-        else {
-            setOverlay([
-                //move this slot to first pressed position
-                swapProps(slot, pressed, false, OverlayType.TAP_SWAP),
-                //move pressed slot to this position
-                swapProps(pressed, slot, true, OverlayType.TAP_SWAP),
-            ]);
-        }
-    };
+    const touchAnimation = useRef(new Animated.ValueXY()).current;
+    //TODO: learn about setOffset, flattenOffset, extractOffset functions on ValueXY
 
     /**
      * clear pressed ball on overlay (swap or drag)
      */
-    useEffect( () => {
-        setPressed(null);
+    useEffect(() => {
+        //TODO: check that I am doing this
+        //setPressed(null);
     }, [overlay]);
 
     /**
@@ -106,29 +123,24 @@ export const SwapController = ({executeSwap, findTarget, RenderOverlayBall, ...p
      * resets the timer to 0 when swap pair is reset to null
      */
     useEffect(() => {
-        if ( overlay.length === 2 ) { //do I also need to check overlayType?
-            const [a, b] = overlay;
+        if (overlay) {
+            const callback = () => {
+                swapEffectTimer.setValue(0);
+                // do a swap if the overlay is a pair, or nothing if single (return to start)
+                if (overlay.length === 2) {
+                    const [a, b] = overlay;
+                    executeSwap(a.slot, b.slot);
+                }
+            };
             Animated.timing(swapEffectTimer, {
                 toValue: 1,
+                // should duration vary by effect?
                 duration: 500
-            }).start(() => {
-                executeSwap(a.slot, b.slot);
-                setOverlay([]);
-            });
+            }).start(callback);
         } else {
             swapEffectTimer.setValue(0);
         }
     }, [overlay]);
-
-    /**
-     * what happens when tap and drag are mixed?
-     * looked at I Love Hue Too
-     * one ball is active, blinking and awaiting a target
-     * touch another ball and hold it -- nothing happens until release
-     * drag from another ball to off area -- cancels active ball
-     * it never "picks up" the ball at the start location
-     * if the finger goes from one ball to another, it will swap the original blinking ball with where it was released
-     */
 
 
     /**
@@ -136,225 +148,73 @@ export const SwapController = ({executeSwap, findTarget, RenderOverlayBall, ...p
      * to avoid this, the handler itself should just set the state and not do any calculation
      * calculations will be done by useEffect or animation listeners that detect changes made by the handler
      */
-    const {touchStart, touchRelease, touchLocation, isTouching, isDrag, handlers} = usePanTouch({});
+    const responder = useReduxPanResponder({touchLocation: touchAnimation});
 
-    const isDragging = isDrag && isTouching;
-
-    /**
-     * use responderTarget instead of pressed to avoid confusion around handling second touches
-     *
-     * set by useEffect on touchStart
-     * cleared by start of swap or end of returnToStart
-     */
-    const [responderTarget, setResponderTarget] = useState<CompleteSlot | null>(null);
-
-    const isBallTouch = touchStart !== null && responderTarget !== null;
-
-    /**
-     * initially set to the target ball by responderTarget effect
-     * set by touchLocation listener
-     * cleared by ??
-     */
-    const [hoverSlot, setHoverSlot] = useState<CompleteSlot | null>(null);
-
-
-
-    /**
-     * find the target at the start of every touch
-     */
-    useEffect(() => {
-        if (touchStart !== null) {
-            const target = findTarget(touchStart.pageX, touchStart.pageY, slotAreas);
-            //console.log(touchStart);
-            //console.log("target", target);
-            setResponderTarget(target);
-        }
-    }, [touchStart]);
-
-    /**
-     * begin with hover as the responderTarget
-     */
-    useEffect(() => {
-        setHoverSlot(responderTarget);
-    }, [responderTarget]);
+    const handlers = responder.panHandlers;
 
     /**
      * find out which, if any, slot is being hovered over
-     * for better performance, start by checking current target before checking others
+     * TODO: for better performance, start by checking current target before checking others
+     * want to dispatch only if different than the current
+     * also want to clear
+     * could add a listener to the animated value directly, but would need to update in response to changes of the current hoveringOver
+     * could save position to state and run an effect on the position
      */
+    const listenerRef = useRef<string>();
 
-    //const callbackFindHovering =
+    const listenerCallback = useCallback( ({x, y}: XY) => {
+        const target = findTarget(x, y, slotAreas);
+        if ( target ) console.log("target", target, target.slot,  target && target.slot !== touchedSlotId, "current hover", hoverSlotId);
+        const hoverValue = ( target && target.slot !== touchedSlotId ) ? target.slot : undefined;
+        if ( hoverValue !== hoverSlotId ) {
+            console.log("validated target", hoverValue);
+            dispatch(hoveredOverSlot(hoverValue));
+        }
+    }, [slotAreas, touchedSlotId, hoverSlotId]);
 
 
+    const callbackRef = useRef(listenerCallback);
+
+    useEffect(() => {
+        callbackRef.current = listenerCallback;
+    }, [listenerCallback]);
+
+    useEffect(() => {
+
+        const remove = () => {
+            //console.warn("removing", listenerRef.current, touchAnimation, touchAnimation._listeners[listenerRef.current]);
+            if ( listenerRef.current ) {
+                safeRemoveListener(touchAnimation, listenerRef.current);
+            }
+        }
+
+        listenerRef.current = touchAnimation.addListener((xy) => {
+            callbackRef.current(xy);
+        });
+
+        return remove;
+        // TODO: expo update to get support for this.
+        //return () => touchAnimation.removeAllListeners();
+    }, []);
+
+
+    //console.log("current active listeners outside effect");
+    //console.log(touchAnimation._listeners);
     /**
      * sets the drag overlay ball while dragging
      * never removes it, but expect it to be replaced via returnToStart or swap
      */
-    useEffect( () => {
-        if ( isDrag && responderTarget !== null && touchStart !== null ) {
-            setOverlay([{
-                slot: responderTarget.slot,
-                pageX: Animated.add(touchLocation.x,  responderTarget.pageX - touchStart.pageX),
-                pageY: Animated.add(touchLocation.y, responderTarget.pageY - touchStart.pageY),
+    const dragOverlay: OverlayProps | undefined = useMemo(() => {
+        if ( isDragging && touchedSlotId && touchStart ) {
+            return ({
+                slot: touchedSlotId,
+                pageX: Animated.add(touchAnimation.x, touchStart.slotPageX - touchStart.pageX),
+                pageY: Animated.add(touchAnimation.y, touchStart.slotPageY - touchStart.pageY),
                 overlayType: OverlayType.DRAGGING,
                 isPrimary: true,
-            }]);
+            })
         }
-    }, [responderTarget, isDrag]);
-
-    /**
-     * handle drag release or abort
-     */
-    useEffect(() => {
-        if (touchRelease !== null) {
-            if ( touchRelease.isSuccess ) {
-                releaseAtLocation(touchRelease);
-            } else {
-                returnToStart(touchRelease);
-            }
-        }
-    }, [touchRelease]);
-
-    const returnEffectTimer = useRef(new Animated.Value(0)).current;
-
-    /**
-     * sets the ball as an overlay for the duration of the return effect and then removes it
-     */
-    const returnToStart = (currentLocation: PageLocation ) => {
-        if ( responderTarget === null ) {
-            return;
-        }
-        setOverlay([
-            {
-                slot: responderTarget.slot,
-                start: slotTranslatedLocation(currentLocation, responderTarget),
-                end: responderTarget,
-                timer: returnEffectTimer,
-                isPrimary: true,
-                overlayType: OverlayType.RETURNING,
-            }
-        ]);
-        Animated.spring(returnEffectTimer, {
-            toValue: 1,
-        }).start(() => {
-            setOverlay([]);
-            returnEffectTimer.setValue(0);
-        })
-    };
-
-    /**
-     * takes the current touch position and the start touch position and applies
-     * to the slot location to get the slot pageX/Y corresponding to the touch
-     *
-     * passing responderTarget through props to ensure that it isn't null
-     * because this will already have been checked in user
-     */
-    const slotTranslatedLocation = (currentTouch: PageLocation, targetSlot: PageLocation): PageLocation => {
-        if ( touchStart === null ) {
-            console.warn("null touch start location");
-            return currentTouch;
-        }
-        const dx = currentTouch.pageX - touchStart.pageX;
-        const dy = currentTouch.pageY - touchStart.pageY;
-        return {
-            pageX: targetSlot.pageX + dx,
-            pageY: targetSlot.pageY + dy,
-        }
-    };
-
-    /**
-     * when releasing from a drag, need to find the target that it was released to
-     * if there is a target, begin the swap between the gesture slot and the target slot
-     * if not, return the ball to its initial position
-     *
-     * when releasing from tap, will process as either first or second tap based on state of pressed
-     */
-    const releaseAtLocation = ({pageX, pageY}: PageLocation): void => {
-        console.log("release");
-
-        //tap
-        if (! isDrag ) {
-            /**
-             * can assume that the release target is the same as the gesture target because if it had moved
-             * it would already be considered not a tap
-             * however there is a chance that responderTarget is still being computed
-             */
-            onTapSlot(responderTarget);
-            return;
-        }
-
-
-        if (touchStart === null) {
-            console.error("releasing from touch without setting start location");
-            return;
-        }
-
-        if (responderTarget === null) {
-            console.error("releasing from responder without setting responderTarget");
-            return;
-        }
-
-        //drag
-        if (isDrag) {
-
-
-
-            const target = findTarget(pageX, pageY, slotAreas);
-            /**
-             * return to start if not releasing at a valid slot, or if releasing at the same slot
-             */
-            if (target === null || target.slot == responderTarget.slot ) {
-                returnToStart({pageX, pageY});
-            }
-            /**
-             * swap move is not symmetric
-             * the dragged balls starts from its current/translated position rather than the touch start position
-             * touchLocation will be in the middle of the ball, but need to pass the top left corner of the slot
-             */
-            else {
-                setOverlay([
-                    {
-                        ...swapProps( responderTarget, target,true, OverlayType.DRAG_SWAP ),
-                        //override the swap start position to the current position
-                        start: slotTranslatedLocation({pageX, pageY}, responderTarget),
-                    },
-                    swapProps( target, responderTarget,false, OverlayType.DRAG_SWAP )
-                ])
-            }
-        }
-    };
-
-
-    /**
-     * defaults to point (0,0) in unexpected case that the slot is undefined
-     */
-    const slotLocation = (slot: number): PageLocation => {
-        const location = slotAreas[slot];
-        if (!location) {
-            console.error("cannot find location for slot # " + slot);
-            return {pageY: 0, pageX: 0};
-        }
-        return location;
-    };
-
-    const isSwapSlot = (slot: number): boolean => {
-        return overlay.some(o => o.slot === slot && (o.overlayType === OverlayType.TAP_SWAP || o.overlayType === OverlayType.DRAG_SWAP ));
-    };
-
-    const isDraggingSlot = (slot: number): boolean => {
-        return isDragging && responderTarget !== null && responderTarget.slot === slot;
-    };
-
-    const isPressedSlot = (slot: number): boolean => {
-        return pressed !== null && pressed.slot === slot;
-    };
-
-    const getSlotProps = (slot: number) => ({
-        isSwapping: isSwapSlot(slot),
-        isPressed: isPressedSlot(slot),
-        isDragging: isDraggingSlot(slot),
-        isOverlay: overlay.some( o => o.slot === slot ),
-    });
+    }, [isDragging, touchedSlotId]);
 
     useEffect(() => {
         console.log(overlay);
@@ -362,27 +222,27 @@ export const SwapController = ({executeSwap, findTarget, RenderOverlayBall, ...p
 
 
     return (
-        <ControllerContext.Provider
-            value={{
-                slots: slotAreas,
-                registerSlot,
-                getSlotProps,
-            }}
-        >
+        <>
             <View
                 {...props} //includes children
                 {...handlers}
             />
             <Portal>
-                {overlay.map(
+                {overlay?.map(
                     (overlayProps) => (
                         <RenderOverlayBall
                             key={overlayProps.slot}
                             {...overlayProps}
+                            timer={swapEffectTimer}
                         />
                     )
                 )}
+                {dragOverlay !== undefined && (
+                    <RenderOverlayBall
+                        {...dragOverlay}
+                    />
+                )}
             </Portal>
-        </ControllerContext.Provider>
+        </>
     );
 };

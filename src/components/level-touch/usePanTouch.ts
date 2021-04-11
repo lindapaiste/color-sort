@@ -1,7 +1,6 @@
-import {useCallback, useEffect, useRef, useState} from "react";
-import {DeltaXY, PageLocation} from "./types";
+import {useCallback, useEffect, useMemo, useRef, useState} from "react";
+import {DeltaXY, PageLocation, XY} from "./types";
 import {Animated, GestureResponderEvent, GestureResponderHandlers} from "react-native";
-import {I_Point} from "../animated/DragOrTap";
 
 /**
  * callback handlers can take too long, causing a violation
@@ -48,6 +47,8 @@ export interface Props {
 
 export const usePanTouch = ({tapMaxDuration = 500, moveMinDistance = 3}: Props): PanTouchReturn => {
 
+
+    console.log("usePanTouch re-rendered");
     /**
      * don't need to clear everything when can just see if touch is active or not
      */
@@ -88,7 +89,10 @@ export const usePanTouch = ({tapMaxDuration = 500, moveMinDistance = 3}: Props):
      *
      * also want to treat as a drag if significant movement occurs, even if quicker than timeout
      */
+    const tapTimeOutRef = useRef<number | null>(null);
     let tapTimeoutHandler = useRef<number | null>(null).current;
+
+    console.log("timeout", tapTimeOutRef.current)
 
     /**
      * previously defined functions clearTapTimeout and startTapTimeout with no parameters, but this leads to stale closure problem
@@ -99,60 +103,48 @@ export const usePanTouch = ({tapMaxDuration = 500, moveMinDistance = 3}: Props):
      */
     useEffect(() => {
         if (isTouching) {
-            tapTimeoutHandler = setTimeout(() => {
+            tapTimeOutRef.current = setTimeout(() => {
                 setIsDrag(true);
                 console.log("became drag because touch lasted longer than timeout duration")
             }, tapMaxDuration);
         } else {
-            if (tapTimeoutHandler !== null) {
-                clearTimeout(tapTimeoutHandler);
+            if (tapTimeOutRef.current !== null) {
+                clearTimeout(tapTimeOutRef.current);
                 console.log("cleared timeout");
             }
         }
         return () => {
-            if (tapTimeoutHandler !== null) {
-                clearTimeout(tapTimeoutHandler);
+            if (tapTimeOutRef.current !== null) {
+                clearTimeout(tapTimeOutRef.current);
             }
         }
-    }, [isTouching]);
+    }, [isTouching, tapMaxDuration]);
 
     /**
      * set an initial value of touchLocation when the touch starts
      * if displaying properly, this shouldn't matter because overlay shouldn't start until isDrag=true
      * but it has created issues
      */
-    useEffect( () => {
-        if ( touchStart !== null ) {
+    useEffect(() => {
+        if (touchStart !== null) {
             const {pageX, pageY} = touchStart;
             touchLocation.setValue({x: pageX, y: pageY});
         }
-    }, [touchStart]);
-
-    const onUnmount = (): void => {
-        if (tapTimeoutHandler !== null) {
-            clearTimeout(tapTimeoutHandler);
-        }
-        touchLocation.removeListener(moveListener);
-    };
-
-    //cleanup function only
-    useEffect(() => {
-        return onUnmount;
-    }, []);
+    }, [touchStart, touchLocation]);
 
 
-    const valueDelta = (value: I_Point): DeltaXY => {
+    const valueDelta = useCallback((value: XY): DeltaXY => {
         const start = touchStart === null ? {pageX: 0, pageY: 0} : touchStart;
         return ({
             dx: value.x - start.pageX,
             dy: value.y - start.pageY,
         });
-    };
+    }, [touchStart]);
 
-    const isExceededMoveThreshold = ({dx, dy}: DeltaXY): boolean => { //can pass PanResponderGestureState or can calculate dx & dy
+    const isExceededMoveThreshold = useCallback(({dx, dy}: DeltaXY): boolean => { //can pass PanResponderGestureState or can calculate dx & dy
         const distance = Math.sqrt(dx * dx - dy * dy);
         return distance > moveMinDistance;
-    };
+    }, [moveMinDistance]);
 
     /**
      * on every move, see if drag threshold has been passed
@@ -160,55 +152,66 @@ export const usePanTouch = ({tapMaxDuration = 500, moveMinDistance = 3}: Props):
      * define the callback with dependencies on isDrag and touchStart
      * because writing the callback directly inside touchLocation.addListener led to isDrag changing value repeatedly
      */
-    const listenerCallback = useCallback( ({x, y}: I_Point) => {
-        console.log({isDrag});
-        if (!isDrag) {
-            const delta = valueDelta({x, y});
-            if (isExceededMoveThreshold(delta)) {
-                setIsDrag(true);
-                console.log(`became drag because movement of ${delta} exceeded threshold of ${moveMinDistance}`)
+    const listenerCallback = useCallback(({x, y}: XY) => {
+            console.log({isDrag});
+            if (!isDrag) {
+                const delta = valueDelta({x, y});
+                if (isExceededMoveThreshold(delta)) {
+                    setIsDrag(true);
+                    console.log(`became drag because movement of ${delta} exceeded threshold of ${moveMinDistance}`)
+                }
             }
-        }
-    },
-        [isDrag, touchStart]
+        },
+        [isDrag, valueDelta, isExceededMoveThreshold, moveMinDistance]
     );
-    const moveListener = touchLocation.addListener(() => {});//listenerCallback);
+    const moveListener = touchLocation.addListener(() => {
+    });//listenerCallback);
 
-    const onEndTouch = (e: GestureResponderEvent, isSuccess: boolean) => {
+    //cleanup function only
+    useEffect(() => {
+        return () => {
+            if (tapTimeOutRef.current !== null) {
+                clearTimeout(tapTimeOutRef.current);
+            }
+            touchLocation.removeListener(moveListener);
+        };
+    }, [touchLocation, moveListener]);
+
+    const onEndTouch = useCallback((e: GestureResponderEvent, isSuccess: boolean) => {
         setTouchRelease({
             ...e.nativeEvent,
             isSuccess,
         });
         setIsTouching(false);
-    };
+    }, [setIsTouching, setTouchRelease]);
 
-    const onStartTouch = (e: GestureResponderEvent) => {
+    const onStartTouch = useCallback((e: GestureResponderEvent) => {
         setTouchStart(e.nativeEvent);
         setIsTouching(true);
         setIsDrag(false);
-    };
+    }, [setTouchStart, setIsTouching, setIsDrag]);
 
     /**
      * here, just return true always
      */
-    const onStartShouldSetResponder = (e: GestureResponderEvent): boolean => {
+    const onStartShouldSetResponder = useCallback((e: GestureResponderEvent): boolean => {
         console.log("should start?");
         return true;
-    };
+    }, []);
 
-    const onResponderGrant = (e: GestureResponderEvent): void => {
+    const onResponderGrant = useCallback((e: GestureResponderEvent): void => {
         console.log("granted");
-    };
+    }, []);
 
     /**
      * assume we are not dragging until told otherwise
      * create timer which automatically converts to a drag after the duration has passed
      */
-    const onResponderStart = (e: GestureResponderEvent): void => {
+    const onResponderStart = useCallback((e: GestureResponderEvent): void => {
         console.log("start");
         console.log(e.nativeEvent);
         onStartTouch(e);
-    };
+    }, [onStartTouch]);
     /**
      * does two things:
      * 1. see if this has moved enough to count as a drag (but don't repeat if already considered dragging)
@@ -216,50 +219,63 @@ export const usePanTouch = ({tapMaxDuration = 500, moveMinDistance = 3}: Props):
      *      (alternatively, could set the dragTranslate regardless and attach an event listener to see when distance exceeded)
      * 2. updated the dragTranslate Animated.ValueXY with the translation
      */
-    const onResponderMove = (e: GestureResponderEvent): void => {
+    const onResponderMove = useCallback((e: GestureResponderEvent): void => {
         console.log("move");
         Animated.event(
             [{pageX: touchLocation.x, pageY: touchLocation.y}]
         )(e.nativeEvent);
         listenerCallback({x: e.nativeEvent.pageX, y: e.nativeEvent.pageY});
-    };
+    }, [listenerCallback, touchLocation]);
     /**
      * called on successful lift up of finger
      */
-    const onResponderRelease = (e: GestureResponderEvent): void => {
+    const onResponderRelease = useCallback((e: GestureResponderEvent): void => {
         console.log("release");
         onEndTouch(e, true);
-    };
+    }, [onEndTouch]);
     /**
      * gets called when some other element becomes the responder
      */
-    const onResponderTerminate = (e: GestureResponderEvent): void => {
+    const onResponderTerminate = useCallback((e: GestureResponderEvent): void => {
         console.log("terminate");
         onEndTouch(e, false);
-    };
+    }, [onEndTouch]);
     /**
      * honestly not sure when called
      */
-    const onResponderEnd = (e: GestureResponderEvent): void => {
+    const onResponderEnd = useCallback((e: GestureResponderEvent): void => {
         console.log("end");
         onEndTouch(e, false);
-    };
+    }, [onEndTouch]);
 
+    const handlers = useMemo(() => ({
+        onStartShouldSetResponder,
+        onResponderStart,
+        onResponderMove,
+        onResponderRelease,
+        onResponderTerminate,
+        onResponderEnd,
+        onResponderGrant,
+    }), [onStartShouldSetResponder,
+        onResponderStart,
+        onResponderMove,
+        onResponderRelease,
+        onResponderTerminate,
+        onResponderEnd,
+        onResponderGrant,
+    ]);
 
-    return {
-        handlers: {
-            onStartShouldSetResponder,
-            onResponderStart,
-            onResponderMove,
-            onResponderRelease,
-            onResponderTerminate,
-            onResponderEnd,
-            onResponderGrant,
-        },
+    return useMemo(() => ({
+        handlers,
         touchLocation,
         touchRelease,
         touchStart,
         isDrag,
-        isTouching,
-    }
+        isTouching
+    }), [handlers,
+        touchLocation,
+        touchRelease,
+        touchStart,
+        isDrag,
+        isTouching]);
 };

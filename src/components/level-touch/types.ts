@@ -11,9 +11,19 @@ export interface StandardEventLocation {
     pageY: number;
 }
 
+export interface XY {
+    x: number;
+    y: number;
+}
+
 export interface PageLocation {
     pageX: number;
     pageY: number;
+}
+
+export interface AbsoluteLocation {
+    absoluteX: number;
+    absoluteY: number;
 }
 
 export interface Offset {
@@ -73,11 +83,18 @@ export interface PositionProps extends AnimatedOffset {
     containerOffset?: Offset;
 }
 
-export type OverlayProps = IsEither<TimedLocation, AnimatedLocation> & {
+interface OverlayShared {
     slot: number;
-    overlayType: OverlayType,
-    isPrimary: boolean,
+    overlayType: OverlayType;
+    isPrimary: boolean;
 }
+
+export interface OverlayData extends OverlayShared {
+    start: PageLocation;
+    end: PageLocation;
+}
+
+export type OverlayProps = IsEither<TimedLocation, AnimatedLocation> & OverlayShared;
 
 export enum OverlayType {
     DRAGGING,
@@ -98,4 +115,8 @@ export type RegisterFunction = (slot: number, location: PageLocation) => void;
 
 export interface PropSlot {
     slot: number;
+}
+
+export interface SlotFinder {
+    (x: number, y: number): CompleteSlot | null
 }

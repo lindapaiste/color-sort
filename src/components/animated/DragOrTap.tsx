@@ -1,5 +1,5 @@
-import {I_Slot, LOCATIONS} from "../../state/scale/types";
-import {useLevelSelector} from "../../state";
+import {I_Slot, LocatedBall, LOCATIONS} from "../../state/scale/types";
+import {__useLevelSelector} from "../../state";
 import {getBallLocation, getDropZones} from "../../state/scale/selectors";
 import {Animated} from "react-native";
 import {
@@ -14,29 +14,18 @@ import React, {createRef, PropsWithChildren} from "react";
 import {useDispatch} from "react-redux";
 import {moveBall, movePositionedBall, swapBalls} from "../../state/scale/actions";
 import {useActiveBallId, useActiveBallSlot, useActiveProps, useSetActiveBall} from "./useActiveBall";
-import {GestureHandlers} from "./GestureHandlers";
 import {PanTouchableHandler} from "./PanTouchableHandler";
-import {LocatedBall} from "../../state/scale/types";
-
-export interface I_Point {
-    x: number;
-    y: number;
-}
-
-export interface I_AbsolutePositioned {
-    absoluteX: number;
-    absoluteY: number;
-}
+import {AbsoluteLocation, XY} from "../level-touch/types";
 
 /**
  * want the functionality to be independent of the libraries or components that I use to implement it
  */
 export interface GestureEvents {
-    onDragStart: (e: I_Point) => void,
-    onDragMove: (e: I_Point) => void,
-    onDragRelease: (e: I_Point) => void,
-    onDragCancel: (e: I_Point) => void,
-    onPress: (e: I_Point) => void,
+    onDragStart: (e: XY) => void,
+    onDragMove: (e: XY) => void,
+    onDragRelease: (e: XY) => void,
+    onDragCancel: (e: XY) => void,
+    onPress: (e: XY) => void,
 }
 
 type DragTapLogicProps = { mode: MODE } & Partial<DragCallbacks> & LocatedBall;
@@ -115,7 +104,7 @@ export const useDragTapLogic = ({mode, id, currentLocation, position, ...partial
         returnToStart();
     };
 
-    const onDragRelease = ({x, y}: I_Point): void => {
+    const onDragRelease = ({x, y}: XY): void => {
         const newSlot = findDropSlot(x, y);
         console.log({
             newSlot,
@@ -130,7 +119,7 @@ export const useDragTapLogic = ({mode, id, currentLocation, position, ...partial
         }
     };
 
-    const onDragMove = ({x,y}: I_Point): void => {
+    const onDragMove = ({x,y}: XY): void => {
         translation.setValue({
             x,
             y,
@@ -221,7 +210,7 @@ export const BallDragOrTap = ({
 
     const setActiveId = useSetActiveBall();
 
-    const activeBallZone = useLevelSelector(getBallLocation(activeId));
+    const activeBallZone = __useLevelSelector(getBallLocation(activeId));
 
     //make this conditional in case active id was already overwritten by something else
     const deactivate = () => {
@@ -232,7 +221,7 @@ export const BallDragOrTap = ({
 
     const activate = () => setActiveId(id);
 
-    const zones = useLevelSelector(getDropZones);
+    const zones = __useLevelSelector(getDropZones);
 
     const dispatch = useDispatch();
 
@@ -272,7 +261,7 @@ export const BallDragOrTap = ({
         onReturn();
     };
 
-    const _releaseAt = (point: I_AbsolutePositioned): void => {
+    const _releaseAt = (point: AbsoluteLocation): void => {
         if (mode === MODE.INDEPENDENT) {
             const newZone = findDropZone(zones)(point.absoluteX, point.absoluteY);
             console.log({

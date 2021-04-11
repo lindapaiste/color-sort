@@ -3,8 +3,8 @@ import {Animated, ViewStyle} from "react-native";
 import {useDimensions} from "../../ui/vwHooks";
 import {styles} from "../../ui/styles";
 import {random} from "lodash";
-import {useBoxSwapLevelSelector} from "../../state";
-import {getBoxColor, getLayout} from "../../state/slotSwap/selectors";
+import {useSelector} from "../../state";
+import {selectBoxColorById, selectLayout} from "../../state/slotSwap/selectors";
 
 /**
  * win effect:
@@ -38,8 +38,8 @@ export interface RProps {
  * interpolate the timer into style effects
  */
 export const CBox = ({index, winEffectTiming, ...props}: PropsWithChildren<CProps>) => {
-    const color = useBoxSwapLevelSelector(getBoxColor(index));
-    const padding = useBoxSwapLevelSelector(getLayout).boxPadding; //is the min of vw or vh
+    const color = useSelector(selectBoxColorById(index));
+    const padding = useSelector(selectLayout).boxPadding; //is the min of vw or vh
 
     const timingOffset = random(-.1, .1, true);
     const screenWidth = useDimensions().width;

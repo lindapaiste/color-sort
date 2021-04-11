@@ -1,12 +1,18 @@
 import {STATES} from "../animated/useLevelAnimation";
 import {RBall} from "../animated/AnimatedBall";
-import React from "react";
+import React, {useEffect, useMemo} from "react";
 import {Animated} from "react-native";
-import {useBoxSwapLevelSelector, useUserSelector} from "../../state";
-import {getLayout, getSlotProps} from "../../state/slotSwap/selectors";
-import {getSetting} from "../../state/user/selectors";
-import {useGetSlotProps} from "../level-touch/ControllerContext";
-import {PropSlot} from "../level-touch/types";
+import {useSelector} from "../../state";
+import {
+    selectBallDataById,
+    selectBallIdForSlotId,
+    selectBoxColorById,
+    selectBoxForSlotId,
+    selectLayout,
+    selectOverlayData,
+    selectPressedSlotId
+} from "../../state/slotSwap/selectors";
+import {selectSetting} from "../../state/user/selectors";
 import {useBounce} from "../level-touch/useBounce";
 import {CRegisteredSlot} from "../level-touch/RegisteredSlot";
 
@@ -23,29 +29,6 @@ export interface CProps {
  * fade to box color requires box color
  */
 
-/**
- * separate what has to do with getting information from what has to do with displaying
- */
-
-export const useBallSlotProps = ({slot}: PropSlot) => {
-    const {diameter, slotSize} = useBoxSwapLevelSelector(getLayout);
-    const {isCorrect, boxColor, ballId, color} = useBoxSwapLevelSelector(getSlotProps(slot));
-    const isShowCheck = useUserSelector(getSetting('isShowCheck'));
-    const isCheck = isCorrect && isShowCheck;
-    const {isOverlay, isSwapping, isPressed, isDragging} = useGetSlotProps(slot);
-
-    return {
-        color,
-        diameter,
-        slotSize,
-        isCheck,
-        ballId,
-        isOverlay,
-        isPressed,
-        boxColor,
-    }
-};
-
 export interface RProps {
     slot: number;
     winEffectTiming: Animated.Value;
@@ -61,32 +44,60 @@ export interface RProps {
 
 export const CSlotBall = ({slot, winEffectTiming, loadInTiming, state}: CProps) => {
 
-    const {color, diameter, slotSize, isCheck, ballId, isOverlay, isPressed, boxColor} = useBallSlotProps({slot});
+    const {diameter, slotSize} = useSelector(selectLayout);
+    const ballId = useSelector(selectBallIdForSlotId(slot));
+    const {color, correctBox} = useSelector(selectBallDataById(ballId));
+    const boxId = useSelector(selectBoxForSlotId(slot));
+    const boxColor = useSelector(selectBoxColorById(boxId));
+    const isCorrect = correctBox === boxId;
+    const isShowCheck = useSelector(selectSetting('isShowCheck'));
+    const isCheck = isCorrect && isShowCheck;
+    const isPressed = useSelector(state => selectPressedSlotId(state) === slot);
+    const isOverlay = useSelector(state => selectOverlayData(state)?.some(d => d.slot === slot));
 
     const bouncyScale = useBounce(isPressed);
+
+    console.log("ball re-rendered");
+
+    const scale = useMemo(() => {
+        console.log("calculating scale");
+        return state === STATES.LOADING_IN ? loadInTiming.interpolate({
+            inputRange: [0, 1],
+            outputRange: [0, 1],
+        }) : state === STATES.PLAYING ? bouncyScale
+            : winEffectTiming.interpolate({
+                inputRange: [0, .5, 1],
+                outputRange: [1, slotSize / diameter, slotSize / diameter],
+            });
+    }, [state, loadInTiming, winEffectTiming, bouncyScale, slotSize, diameter]);
+
+    const borderRadius = useMemo(() =>
+            winEffectTiming.interpolate({
+                inputRange: [0, .5, 1],
+                outputRange: [.5, 0, 0],
+            }),
+        [winEffectTiming]
+    );
+
+    const animatedColor = useMemo(() =>
+        winEffectTiming.interpolate({
+            inputRange: [0, .5, 1],
+            outputRange: [color, boxColor, boxColor],
+        }),
+        [winEffectTiming]
+    );
+
+    useEffect(() => console.log("load in Timing Change"), [loadInTiming]);
 
     return (
         <CRegisteredSlot slot={slot}>
             <RBall
-                color={winEffectTiming.interpolate({
-                    inputRange: [0, .5, 1],
-                    outputRange: [color, boxColor, boxColor],
-                })}
+                color={animatedColor}
                 diameter={diameter}
                 isCheck={isCheck && state === STATES.PLAYING}
-                scale={state === STATES.LOADING_IN ? loadInTiming.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [0, 1],
-                }) : state === STATES.PLAYING ? bouncyScale
-                    : winEffectTiming.interpolate({
-                        inputRange: [0, .5, 1],
-                        outputRange: [1, slotSize / diameter, slotSize / diameter],
-                    })}
+                scale={scale}
                 opacity={isOverlay ? 0 : 1}
-                borderRadius={winEffectTiming.interpolate({
-                    inputRange: [0, .5, 1],
-                    outputRange: [.5, 0, 0],
-                })}
+                borderRadius={borderRadius}
             />
         </CRegisteredSlot>
     )

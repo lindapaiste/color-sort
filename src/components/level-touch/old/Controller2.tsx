@@ -9,20 +9,20 @@ import React, {
     useState
 } from "react";
 import {Animated, GestureResponderEvent, PanResponder, PanResponderGestureState, View} from "react-native";
-import {DeltaXY, Offset, RegisterFunction, SlotArray} from "../types";
+import {DeltaXY, Offset, RegisterFunction, SlotArray, XY} from "../types";
 import {colorString, createRandom} from "../../../util/color-util";
 import {range} from "lodash";
 import {RBallParent} from "../../animated/AnimatedBall";
 import {swapIndexes} from "../../../util/array-edit";
-import {GestureEvents, I_Point} from "../../animated/DragOrTap";
+import {GestureEvents} from "../../animated/DragOrTap";
 import {TimedLocation} from "../types";
 import {AnimatedLocation} from "../types";
-import {findIsInCircle} from "../useFindTarget";
 import {RRegisteredSlot} from "../RegisteredSlot";
 import {useComponentLocation} from "../useComponentLocation";
 import {ROverlayPosition} from "../OverlayPosition";
 import {RBasicBall} from "../BasicBall";
 import {useSlotRegistry} from "../useSlotRegistry";
+import {findIsInCircle} from "../calc";
 
 /**
  * want to see what happens if I store just the slot id for pressed/dragging/etc and not the whole location
@@ -425,7 +425,7 @@ export const SwapController = ({executeSwap, findTarget, RenderOverlayBall, chil
         });
     };
 
-    const valueDelta = (value: I_Point): DeltaXY => {
+    const valueDelta = (value: XY): DeltaXY => {
         const start = touchStart === null ? {pageX: 0, pageY: 0} : touchStart;
         return ({
             dx: value.x - start.pageX,

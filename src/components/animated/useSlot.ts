@@ -1,12 +1,12 @@
 import {I_Slot} from "../../state/scale/types";
-import {useLevelSelector} from "../../state";
+import {__useLevelSelector} from "../../state";
 import {getZoneRectangle} from "../../state/scale/selectors";
 import {BoxSizes, LayoutSettings} from "../boxes/calcSizing";
 import {LayoutRectangle} from "react-native";
 import {useLayout} from "../boxes/LayoutRedux";
-import {I_Point} from "./DragOrTap";
+import {XY} from "../level-touch/types";
 
-export const getCenter = ( rectangle: LayoutRectangle ): I_Point => {
+export const getCenter = ( rectangle: LayoutRectangle ): XY => {
   return {
       x: rectangle.x + .5 * rectangle.width,
       y: rectangle.y + .5 * rectangle.height,
@@ -17,7 +17,7 @@ export const getCenter = ( rectangle: LayoutRectangle ): I_Point => {
 type CalcRequiresProps = I_Slot & Pick<BoxSizes, 'boxPadding' | 'slotSize'> & Pick<LayoutSettings, 'ballsPerRow'>
 
 export const useSlotRectangle = ({location, position}: I_Slot): LayoutRectangle | undefined => {
-    const zone = useLevelSelector(getZoneRectangle(location));
+    const zone = __useLevelSelector(getZoneRectangle(location));
     const layout = useLayout();
     if ( zone === undefined || layout === undefined ) {
         return undefined;
@@ -33,7 +33,7 @@ export const useSlotRectangle = ({location, position}: I_Slot): LayoutRectangle 
     }
 };
 
-export const useSlotCenter = (props: I_Slot): I_Point | undefined => {
+export const useSlotCenter = (props: I_Slot): XY | undefined => {
     const rect = useSlotRectangle(props);
     return rect ? getCenter(rect) : undefined;
 };

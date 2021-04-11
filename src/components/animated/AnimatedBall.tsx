@@ -1,7 +1,6 @@
 import React, {PropsWithChildren, useRef} from "react";
 import {Animated} from "react-native";
-import {BallDragOrTap2, MODE} from "./DragOrTap";
-import {I_Slot, LocatedBall} from "../../state/scale/types";
+import {LocatedBall} from "../../state/scale/types";
 import {styles} from "../../ui/styles";
 import {AntDesign as Icon} from "@expo/vector-icons";
 import {RBallSlot} from "../boxes/BallSlot";

@@ -7,16 +7,17 @@
 import React from "react";
 import {I_Slot, LocatedBall} from "../../state/scale/types";
 import {useLayout} from "../boxes/LayoutRedux";
-import {useLevelSelector} from "../../state";
+import {__useLevelSelector} from "../../state";
 import {getDropZones, getLocIdMap} from "../../state/scale/selectors";
 import {useFindDropSlot2} from "./findDropZone";
 import {Animated} from "react-native";
 import {useActiveBallSlot, useActiveProps} from "./useActiveBall";
 import {useDispatch} from "react-redux";
 import {movePositionedBall, swapBalls} from "../../state/scale/actions";
-import {GestureEvents, I_Point, MODE, withNullCallbacks} from "./DragOrTap";
+import {GestureEvents, MODE, withNullCallbacks} from "./DragOrTap";
 import {PropsWithChildren, useState} from "react";
 import {PanTouchableHandler} from "./PanTouchableHandler";
+import {XY} from "../level-touch/types";
 
 //TODO: zone x/y is relative -- relative to what?  -- also seems to include margin
 
@@ -30,7 +31,7 @@ export const BoxSwapLevelHandler = ({children}: PropsWithChildren<{}>) => {
 
     const [activeBall, setActiveBall] = useState<LocatedBall | null>(null);
 
-    const [dragTouchPoint, setDragTouchPoint] = useState<I_Point | null>(null);
+    const [dragTouchPoint, setDragTouchPoint] = useState<XY | null>(null);
 
     const translation = new Animated.ValueXY({x: 0, y: 0});
 
@@ -39,11 +40,11 @@ export const BoxSwapLevelHandler = ({children}: PropsWithChildren<{}>) => {
      */
     const dispatch = useDispatch();
     const layout = useLayout(); //TODO: default in case of undefined
-    const zones = useLevelSelector(getDropZones);
+    const zones = __useLevelSelector(getDropZones);
     const findDropSlot = useFindDropSlot2();
-    const locIdMap = useLevelSelector(getLocIdMap);
+    const locIdMap = __useLevelSelector(getLocIdMap);
 
-    const calcTarget = ({x,y}: I_Point): LocatedBall | null => {
+    const calcTarget = ({x,y}: XY): LocatedBall | null => {
         //for any event - click, drag, hover - want to find out what ball is at that position
         const slot = findDropSlot(x, y);
         console.log({slot});
@@ -69,7 +70,7 @@ export const BoxSwapLevelHandler = ({children}: PropsWithChildren<{}>) => {
         ).start();
     };
 
-    const onPress = (point: I_Point) => {
+    const onPress = (point: XY) => {
         //activate
         //deactivate
         //swap
@@ -96,14 +97,14 @@ export const BoxSwapLevelHandler = ({children}: PropsWithChildren<{}>) => {
         }
     };
 
-    const onDragMove = ({x,y}: I_Point): void => {
+    const onDragMove = ({x,y}: XY): void => {
         translation.setValue({
             x,
             y,
         });
     };
 
-    const onDragRelease = (point: I_Point) => {
+    const onDragRelease = (point: XY) => {
         const target = calcTarget(point);
         if ( target && activeBall ) {
             dispatch(swapBalls(activeBall.id, target.id));
@@ -114,7 +115,7 @@ export const BoxSwapLevelHandler = ({children}: PropsWithChildren<{}>) => {
         }
     };
 
-    const onDragStart = (point: I_Point) => {
+    const onDragStart = (point: XY) => {
         const target = calcTarget(point);
         if ( target ) {
             setActiveBall(target);
